@@ -13,6 +13,8 @@ class Cat extends Model
 
     protected $primaryKey = 'category_id';
 
+    protected $table = 'categories';
+
     public $timestamps = false;
 
     #[Fillable(['name'])]
