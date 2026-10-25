@@ -8,6 +8,7 @@ use App\Http\Controllers\RepsController;
 use App\Http\Controllers\RepsMediaController;
 use App\Http\Controllers\RepsCommentController;
 use App\Http\Controllers\RepsActivityController;
+use App\Http\Controllers\OtpController;
 
 Route::get('/', function () {
     return view('welcome');
