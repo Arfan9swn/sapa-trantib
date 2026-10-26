@@ -7,11 +7,10 @@
         <!-- Subtle green glow on the left side -->
         <div class="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-emerald-900/20 via-transparent to-transparent -z-10 pointer-events-none"></div>
 
-        <!-- Navbar (no login/register now) -->
+        <!-- Navbar (Sapa-Trantib at top-left, no login/register) -->
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="flex flex-col lg:flex-row items-center justify-center gap-6 text-center lg:text-left">
-                <span class="text-[10px] font-medium text-slate-500 uppercase tracking-[0.18em] leading-none">Landing Page</span>
-                <span class="text-3xl lg:text-4xl font-serif italic text-white tracking-tight">Sapa-Trantib</span>
+            <div class="flex items-center gap-3 text-left">
+                <span class="text-2xl lg:text-3xl font-serif italic text-white tracking-tight">Sapa-Trantib</span>
             </div>
         </div>
 
@@ -19,11 +18,11 @@
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
                 <div class="space-y-6 max-w-lg lg:max-w-none">
-                    <h1 class="text-4xl lg:text-6xl font-serif italic text-white leading-[1.05] tracking-tight">
+                    <h1 class="text-4xl lg:text-6xl font-lexend font-semibold text-white leading-[1.05] tracking-tight">
                         Membantu warga untuk
                         <span class="block leading-none">Membangun</span>
                     </h1>
-                    <h2 class="text-4xl lg:text-6xl font-serif italic text-white leading-[1.05] tracking-tight mt-2">
+                    <h2 class="text-4xl lg:text-6xl font-lexend font-semibold text-white leading-[1.05] tracking-tight mt-2">
                         Masyarakat Yang
                         <span class="block leading-none">Aman dan teratur</span>
                     </h2>

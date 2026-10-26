@@ -12,6 +12,9 @@ export default defineConfig({
                 bunny('Instrument Sans', {
                     weights: [400, 500, 600],
                 }),
+                bunny('Lexend', {
+                    weights: [600],
+                }),
             ],
         }),
         tailwindcss(),
