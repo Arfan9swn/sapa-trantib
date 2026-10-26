@@ -3,6 +3,10 @@
 @section('title', 'Landing Page - SapaTrantib')
 
 @section('content')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+
     <div class="min-h-screen bg-slate-950 text-slate-200 relative overflow-hidden" style="--font-serif: 'Playfair Display', ui-serif, serif;">
         <!-- Subtle green glow on the left side -->
         <div class="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-emerald-900/20 via-transparent to-transparent -z-10 pointer-events-none"></div>
