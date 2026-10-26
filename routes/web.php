@@ -1,6 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CatController;
+use App\Http\Controllers\SubCatController;
+use App\Http\Controllers\RepsController;
+use App\Http\Controllers\RepsMediaController;
+use App\Http\Controllers\RepsCommentController;
+use App\Http\Controllers\RepsActivityController;
+use App\Http\Controllers\OtpController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -74,3 +82,12 @@ Route::get('/users/{user}/edit', function ($user) {
 Route::get('/users/sa-user', function () {
     return view('users.sa-user');
 })->name('super-admin.user');
+
+//api-routes (d sini aja ga usah bikin separate file -> api.php)
+Route::apiResource('users', UserController::class);
+Route::apiResource('cats', CatController::class);
+Route::apiResource('s-cats', SubCatController::class);
+Route::apiResource('reps', RepsController::class);
+Route::apiResource('rep-media', RepsMediaController::class);
+Route::apiResource('rep-comments', RepsCommentController::class);
+Route::apiResource('rep-activity', RepsActivityController::class);
