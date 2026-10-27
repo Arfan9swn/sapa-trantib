@@ -16,8 +16,17 @@
                 Silahkan membuat akun anda.
             </p>
 
-            <form action="{{ route('login') }}" method="POST" class="space-y-5">
+            <form action="{{ route('register') }}" method="POST" class="space-y-5">
                 @csrf
+
+                <div>
+                    <label class="block text-white text-sm font-medium mb-1.5">Nama</label>
+                    <div class="relative">
+                        <input type="text" name="username" placeholder="Masukkan name anda"
+                               class="w-full pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all px-[20px]"
+                               required>
+                    </div>
+                </div>
 
                 <div>
                     <label class="block text-white text-sm font-medium mb-1.5">E-mail</label>
