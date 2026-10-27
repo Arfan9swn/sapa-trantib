@@ -23,6 +23,11 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
+// landing page
+Route::get('/landing', function () {
+    return view('auth.landing-page');
+})->name('landing');
+
 Route::get('/otp', function () {
     return view('auth.otp');
 })->name('otp');
