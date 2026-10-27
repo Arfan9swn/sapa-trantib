@@ -27,11 +27,11 @@
                 </p>
             </div>
 
-            <form action="{{ route('login') }}" method="POST" class="space-y-5">
+            <form action="{{ route('login.post') }}" method="POST" class="space-y-5">
                 @csrf
 
                 <div>
-                    <label class="block text-white text-sm font-medium mb-1.5">No Telpon</label>
+                    <label class="block text-white text-sm font-medium mb-1.5">E-mail</label>
                     <div class="relative">
                         <input type="email" name="email" placeholder="Masukkan e-mail anda..."
                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all"

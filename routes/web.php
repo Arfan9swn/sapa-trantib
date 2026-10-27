@@ -2,117 +2,158 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\CatController;
-use App\Http\Controllers\SubCatController;
-use App\Http\Controllers\RepsController;
-use App\Http\Controllers\RepsMediaController;
-use App\Http\Controllers\RepsCommentController;
-use App\Http\Controllers\RepsActivityController;
+use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\OtpController;
+use App\Models\User;
+use App\Models\Reps;
+use App\Models\RepsComment;
+use App\Models\OtpVerification;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OtpMail;
 
+// ---------------------------------------------------------------------------
+// Landing / Account Type Selection (guest entry point)
+// ---------------------------------------------------------------------------
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('auth.account-type-sel');
+})->name('account-type');
 
-// auth
+// ---------------------------------------------------------------------------
+// AUTH — Warga (email/password) + Admin (admin/email+password)
+// ---------------------------------------------------------------------------
+
+// Warga login form
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
+// Warga login POST (email + password)
+Route::post('/login', function (Request $request) {
+    $credentials = $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required',
+    ]);
+
+    if (auth()->guard('web')->attempt($credentials)) {
+        $request->session()->regenerate();
+
+        return redirect()->route('reports.create');
+    }
+
+    return back()
+        ->withErrors(['email' => 'Kredensial tidak sesuai.'])
+        ->withInput();
+})->name('login.post');
+
+// Admin login form
+Route::get('/admin/login', function () {
+    return view('auth.admin-login');
+})->name('admin.login');
+
+// Admin login POST
+Route::post('/admin/login', [AdminLoginController::class, 'store'])
+    ->name('admin.login.post');
+
+// Register (warga)
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
-Route::get('/forgot-password', function () {
-    return view('auth.forgot-password');
-})->name('forgot-password');
-
 Route::post('/register', function (Request $request) {
     $validated = $request->validate([
         'username' => 'required|string|max:255',
-        'email' => 'required|email|max:255|unique:users',
+        'email'    => 'required|email|max:255|unique:users',
         'password' => 'required|string|min:6',
     ]);
 
-    $user = \App\Models\User::create([
-        'username' => $validated['username'],
-        'email' => $validated['email'],
+    $user = User::create([
+        'username'      => $validated['username'],
+        'email'         => $validated['email'],
         'password_hash' => bcrypt($validated['password']),
-        'role' => 'warga',
+        'role'          => 'warga',
     ]);
 
-    // Generate and send OTP
-    $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $otpCode   = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
     $expiresAt = now()->addMinutes(10);
 
-    \App\Models\OtpVerification::where('email', $validated['email'])
+    OtpVerification::where('email', $validated['email'])
         ->whereNull('used_at')
         ->update(['used_at' => now()]);
 
-    \App\Models\OtpVerification::create([
-        'email' => $validated['email'],
-        'otp_code' => $otpCode,
+    OtpVerification::create([
+        'email'      => $validated['email'],
+        'otp_code'   => $otpCode,
         'expires_at' => $expiresAt,
         'created_at' => now(),
     ]);
 
-    \Illuminate\Support\Facades\Mail::to($validated['email'])->send(new \App\Mail\OtpMail($validated['email'], $otpCode));
+    Mail::to($validated['email'])
+        ->send(new OtpMail($validated['email'], $otpCode));
 
-    return redirect()->route('otp')->with('email', $validated['email'])->with('status', 'Kode OTP telah dikirim ke email Anda.');
+    return redirect()
+        ->route('otp')
+        ->with('email', $validated['email'])
+        ->with('status', 'Kode OTP telah dikirim ke email Anda.');
 })->name('register.post');
 
 Route::post('/password/update', function (Request $request) {
     $validated = $request->validate([
-        'email' => 'required|email|max:255',
-        'password' => 'required|string|min:6',
+        'email'                 => 'required|email|max:255',
+        'password'              => 'required|string|min:6',
         'password_confirmation' => 'required|same:password',
     ]);
 
-    $user = \App\Models\User::where('email', $validated['email'])->first();
-    if (!$user) {
+    $user = User::where('email', $validated['email'])->first();
+    if (! $user) {
         return back()->withErrors(['email' => 'Email tidak terdaftar.']);
     }
 
     $user->update(['password_hash' => bcrypt($validated['password'])]);
 
-    // Generate and send OTP for confirmation
-    $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $otpCode   = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
     $expiresAt = now()->addMinutes(10);
 
-    \App\Models\OtpVerification::where('email', $validated['email'])
+    OtpVerification::where('email', $validated['email'])
         ->whereNull('used_at')
         ->update(['used_at' => now()]);
 
-    \App\Models\OtpVerification::create([
-        'email' => $validated['email'],
-        'otp_code' => $otpCode,
+    OtpVerification::create([
+        'email'      => $validated['email'],
+        'otp_code'   => $otpCode,
         'expires_at' => $expiresAt,
         'created_at' => now(),
     ]);
 
-    \Illuminate\Support\Facades\Mail::to($validated['email'])->send(new \App\Mail\OtpMail($validated['email'], $otpCode));
+    Mail::to($validated['email'])
+        ->send(new OtpMail($validated['email'], $otpCode));
 
-    return redirect()->route('otp')->with('email', $validated['email'])->with('status', 'Kode OTP konfirmasi telah dikirim ke email Anda.');
+    return redirect()
+        ->route('otp')
+        ->with('email', $validated['email'])
+        ->with('status', 'Kode OTP konfirmasi telah dikirim ke email Anda.');
 })->name('password.update');
 
-// landing page
-Route::get('/landing', function () {
-    return view('auth.landing-page');
-})->name('landing');
+// Forgot-password placeholder
+Route::get('/forgot-password', function () {
+    return redirect()->route('login');
+})->name('forgot-password');
 
+// ---------------------------------------------------------------------------
+// OTP (warga verification — session based, redirects after login)
+// ---------------------------------------------------------------------------
 Route::get('/otp', function () {
     return view('auth.otp');
 })->name('otp');
 
-Route::post('/otp/request', [OtpController::class, 'request'])->name('otp.request');
-Route::post('/otp/verify', [OtpController::class, 'verify'])->name('otp.verify');
+Route::post('/otp/request', [OtpController::class, 'request'])
+    ->name('otp.request');
 
-Route::get('/account-type', function () {
-    return view('auth.account-type-sel');
-})->name('account-type');
+Route::post('/otp/verify', [OtpController::class, 'verify'])
+    ->name('otp.verify');
 
-// cats
+// ---------------------------------------------------------------------------
+// Categories
+// ---------------------------------------------------------------------------
 Route::get('/categories', function () {
     return view('categories.cat-index');
 })->name('categories.index');
@@ -125,9 +166,12 @@ Route::get('/categories/{category}/edit', function ($category) {
     return view('categories.cat-edit', ['category' => $category]);
 })->name('categories.edit');
 
-// reps
+// ---------------------------------------------------------------------------
+// Reports (reps)
+// ---------------------------------------------------------------------------
 Route::get('/reports', function () {
-    $reports = \App\Models\Reps::with('category', 'subCategory', 'comments', 'media')->latest()->get();
+    $reports = Reps::with('category', 'subCategory', 'comments', 'media')
+        ->latest()->get();
     return view('reports.report-index', compact('reports'));
 })->name('reports.index');
 
@@ -136,39 +180,43 @@ Route::get('/reports/create', function () {
 })->name('reports.create');
 
 Route::get('/reports/{report}', function ($report) {
-    $report = \App\Models\Reps::with('category', 'subCategory', 'comments.user', 'media')->findOrFail($report);
+    $report = Reps::with('category', 'subCategory', 'comments.user', 'media')
+        ->findOrFail($report);
     return view('reports.report-show', compact('report'));
 })->name('reports.show');
 
 Route::get('/reports/admin', function () {
-    $reports = \App\Models\Reps::with('category', 'subCategory', 'comments', 'media')->latest()->get();
+    $reports = Reps::with('category', 'subCategory', 'comments', 'media')
+        ->latest()->get();
     return view('reports.admin-report', compact('reports'));
 })->name('reports.admin');
 
-// report comments
 Route::post('/reports/{report}/comments', function ($report) {
-    $report = \App\Models\Reps::findOrFail($report);
-    $comment = \App\Models\RepsComment::create([
-        'report_id' => $report->report_id,
-        'body' => request('body'),
-        'created_at' => now(),
+    $report = Reps::findOrFail($report);
+    RepsComment::create([
+        'report_id'   => $report->report_id,
+        'body'        => request('body'),
+        'created_at'  => now(),
     ]);
     return back()->with('success', 'Komentar berhasil ditambahkan');
 })->name('reports.comments.store');
 
-// delete report
 Route::delete('/reports/{report}', function ($report) {
-    $report = \App\Models\Reps::findOrFail($report);
+    $report = Reps::findOrFail($report);
     $report->delete();
     return back()->with('success', 'Laporan berhasil dihapus');
 })->name('reports.destroy');
 
-// stats
+// ---------------------------------------------------------------------------
+// Statistics
+// ---------------------------------------------------------------------------
 Route::get('/statistics', function () {
     return view('statistics.statistics');
 })->name('statistics');
 
-// users
+// ---------------------------------------------------------------------------
+// Users (admin / CMS)
+// ---------------------------------------------------------------------------
 Route::get('/users', function () {
     return view('users.user-index');
 })->name('users.index');
@@ -185,22 +233,35 @@ Route::get('/users/sa-user', function () {
     return view('users.sa-user');
 })->name('super-admin.user');
 
-// activities
+// ---------------------------------------------------------------------------
+// Activities
+// ---------------------------------------------------------------------------
 Route::get('/activities', function () {
     return view('activities.log');
 })->name('activities.index');
 
-// logout
+// ---------------------------------------------------------------------------
+// Logout (both web and api guards)
+// ---------------------------------------------------------------------------
 Route::post('/logout', function () {
-    auth()->logout();
+    if (auth()->guard('web')->check()) {
+        auth()->guard('web')->logout();
+    }
+    if (auth()->guard('api')->check()) {
+        auth()->guard('api')->logout();
+    }
+    session()->invalidate();
+    session()->regenerateToken();
     return redirect()->route('login');
 })->name('logout');
 
-//api-routes (d sini aja ga usah bikin separate file -> api.php)
-Route::apiResource('users', UserController::class);
-Route::apiResource('cats', CatController::class);
-Route::apiResource('s-cats', SubCatController::class);
-Route::apiResource('reps', RepsController::class);
-Route::apiResource('rep-media', RepsMediaController::class);
-Route::apiResource('rep-comments', RepsCommentController::class);
-Route::apiResource('rep-activity', RepsActivityController::class);
+// ---------------------------------------------------------------------------
+// Admin / CMS — API Resources (fully qualified controllers)
+// ---------------------------------------------------------------------------
+Route::apiResource('users',         \App\Http\Controllers\UserController::class);
+Route::apiResource('cats',          \App\Http\Controllers\CatController::class);
+Route::apiResource('s-cats',        \App\Http\Controllers\SubCatController::class);
+Route::apiResource('reps',          \App\Http\Controllers\RepsController::class);
+Route::apiResource('rep-media',     \App\Http\Controllers\RepsMediaController::class);
+Route::apiResource('rep-comments',  \App\Http\Controllers\RepsCommentController::class);
+Route::apiResource('rep-activity',  \App\Http\Controllers\RepsActivityController::class);
