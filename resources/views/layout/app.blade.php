@@ -25,18 +25,27 @@
             }
         </style>
     </head>
-    <body class="antialiased bg-[#1a3326] text-white min-h-screen">
-        <!-- Navbar -->
-        @include('layout.navbar')
+    @php($isAuthRoute = in_array(request()->path(), ['login', 'register', 'otp', 'account-type', 'landing']))
+    <body class="antialiased bg-[#1a3326] text-white min-h-screen {{ $isAuthRoute ? 'flex items-center justify-center' : '' }}">
 
-        <div class="flex h-screen overflow-hidden">
-            <!-- Sidebar -->
-            @include('layout.sidebar')
+        @if (!$isAuthRoute)
+            <!-- Navbar -->
+            @include('layout.navbar')
 
-            <!-- Main Content -->
-            <main class="flex-1 overflow-y-auto bg-[#1a3326] relative z-0">
+            <div class="flex h-screen overflow-hidden">
+                <!-- Sidebar -->
+                @include('layout.sidebar')
+
+                <!-- Main Content -->
+                <main class="flex-1 overflow-y-auto bg-[#1a3326] relative z-0">
+                    @yield('content')
+                </main>
+            </div>
+        @else
+            <!-- Auth page: full screen content, no navbar/sidebar -->
+            <div class="flex-1 w-full h-screen relative z-0">
                 @yield('content')
-            </main>
-        </div>
+            </div>
+        @endif
     </body>
 </html>
