@@ -35,11 +35,10 @@ class OtpController extends Controller
         Mail::send([], [], function ($message) use ($email, $otpCode) {
             $message->to($email)
                 ->subject('Kode OTP Verifikasi - SapaTrantib')
-                ->setBody(
-                    "Kode OTP verifikasi Anda adalah: {$otpCode}\n" .
-                    "Kode ini berlaku selama 10 menit.\n" .
-                    "Jika Anda tidak meminta kode ini, abaikan email ini.",
-                    'text/plain'
+                ->view('email-otp', [
+                    'otpCode' => $this->$otpCode,
+                ]
+                    
                 );
         });
 
