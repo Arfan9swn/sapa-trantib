@@ -14,6 +14,8 @@ class SubCat extends Model
 
     protected $primaryKey = 'sub_category_id';
 
+    protected $table = 'sub_categories';
+
     public $timestamps = false;
 
     #[Fillable(['category_id', 'name'])]
