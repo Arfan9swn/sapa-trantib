@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CatController;
 use App\Http\Controllers\SubCatController;
@@ -27,8 +28,72 @@ Route::get('/forgot-password', function () {
     return view('auth.forgot-password');
 })->name('forgot-password');
 
-Route::post('/password/update', function () {
-    return back()->with('success', 'Password berhasil diubah.');
+Route::post('/register', function (Request $request) {
+    $validated = $request->validate([
+        'username' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users',
+        'password' => 'required|string|min:6',
+    ]);
+
+    $user = \App\Models\User::create([
+        'username' => $validated['username'],
+        'email' => $validated['email'],
+        'password_hash' => bcrypt($validated['password']),
+        'role' => 'warga',
+    ]);
+
+    // Generate and send OTP
+    $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $expiresAt = now()->addMinutes(10);
+
+    \App\Models\OtpVerification::where('email', $validated['email'])
+        ->whereNull('used_at')
+        ->update(['used_at' => now()]);
+
+    \App\Models\OtpVerification::create([
+        'email' => $validated['email'],
+        'otp_code' => $otpCode,
+        'expires_at' => $expiresAt,
+        'created_at' => now(),
+    ]);
+
+    \Illuminate\Support\Facades\Mail::to($validated['email'])->send(new \App\Mail\OtpMail($validated['email'], $otpCode));
+
+    return redirect()->route('otp')->with('email', $validated['email'])->with('status', 'Kode OTP telah dikirim ke email Anda.');
+})->name('register.post');
+
+Route::post('/password/update', function (Request $request) {
+    $validated = $request->validate([
+        'email' => 'required|email|max:255',
+        'password' => 'required|string|min:6',
+        'password_confirmation' => 'required|same:password',
+    ]);
+
+    $user = \App\Models\User::where('email', $validated['email'])->first();
+    if (!$user) {
+        return back()->withErrors(['email' => 'Email tidak terdaftar.']);
+    }
+
+    $user->update(['password_hash' => bcrypt($validated['password'])]);
+
+    // Generate and send OTP for confirmation
+    $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $expiresAt = now()->addMinutes(10);
+
+    \App\Models\OtpVerification::where('email', $validated['email'])
+        ->whereNull('used_at')
+        ->update(['used_at' => now()]);
+
+    \App\Models\OtpVerification::create([
+        'email' => $validated['email'],
+        'otp_code' => $otpCode,
+        'expires_at' => $expiresAt,
+        'created_at' => now(),
+    ]);
+
+    \Illuminate\Support\Facades\Mail::to($validated['email'])->send(new \App\Mail\OtpMail($validated['email'], $otpCode));
+
+    return redirect()->route('otp')->with('email', $validated['email'])->with('status', 'Kode OTP konfirmasi telah dikirim ke email Anda.');
 })->name('password.update');
 
 // landing page
@@ -39,6 +104,9 @@ Route::get('/landing', function () {
 Route::get('/otp', function () {
     return view('auth.otp');
 })->name('otp');
+
+Route::post('/otp/request', [OtpController::class, 'request'])->name('otp.request');
+Route::post('/otp/verify', [OtpController::class, 'verify'])->name('otp.verify');
 
 Route::get('/account-type', function () {
     return view('auth.account-type-sel');

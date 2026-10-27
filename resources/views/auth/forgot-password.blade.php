@@ -37,7 +37,7 @@
                 <div>
                     <label class="block text-white text-sm font-medium mb-1.5">Email</label>
                     <input type="email" name="email" placeholder="Ketik Email..."
-                           class="w-full px-4 py-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
+                           class="w-full pl-10 px-4 py-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
                            required>
                 </div>
 
@@ -45,7 +45,7 @@
                 <div>
                     <label class="block text-white text-sm font-medium mb-1.5">Password</label>
                     <input type="password" name="password" placeholder="Ketik Password baru..."
-                           class="w-full px-4 py-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
+                           class="w-full pl-10 px-4 py-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
                            required>
                 </div>
 
@@ -53,7 +53,7 @@
                 <div>
                     <label class="block text-white text-sm font-medium mb-1.5">Konfirmasi Password</label>
                     <input type="password" name="password_confirmation" placeholder="Konfirmasi Password baru..."
-                           class="w-full px-4 py-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
+                           class="w-full pl-10 px-4 py-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
                            required>
                 </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OtpMail;
 use App\Models\OtpVerification;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\Mail;
 
 class OtpController extends Controller
 {
-    
     public function request(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -32,21 +32,11 @@ class OtpController extends Controller
             'created_at' => now(),
         ]);
 
-        Mail::send([], [], function ($message) use ($email, $otpCode) {
-            $message->to($email)
-                ->subject('Kode OTP Verifikasi - SapaTrantib')
-                ->setBody(
-                    "Kode OTP verifikasi Anda adalah: {$otpCode}\n" .
-                    "Kode ini berlaku selama 10 menit.\n" .
-                    "Jika Anda tidak meminta kode ini, abaikan email ini.",
-                    'text/plain'
-                );
-        });
+        Mail::to($email)->send(new OtpMail($email, $otpCode));
 
         return response()->json([
             'message' => 'Kode OTP telah dikirim ke email Anda',
             'email' => $email,
-            'otp_code' => $otpCode,
         ]);
     }
 

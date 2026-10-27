@@ -7,6 +7,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
+@if(session('status'))
+<div class="absolute top-6 left-1/2 -translate-x-1/2 z-50">
+    <div class="bg-[#3d5c4c] text-white px-6 py-3 rounded-lg shadow-lg border border-[#4a6a56]">
+        {{ session('status') }}
+    </div>
+</div>
+@endif
+
 <div class="fixed inset-0 w-screen h-screen z-50 overflow-hidden flex bg-[#172111]">
 
     <!-- Background Image with Dark Gradient Overlay (Full Screen) -->
@@ -28,7 +36,7 @@
                     Mohon lanjutkan verifikasi menggunakan Kode OTP yang sudah dikirim ke
                 </p>
                 <p class="text-white text-base md:text-lg font-medium mt-2">
-                    <{{ $phone ?? 'no.telp user' }}>
+                    {{ session('email', 'no.email user') }}
                 </p>
             </div>
 

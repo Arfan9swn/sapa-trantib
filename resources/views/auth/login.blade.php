@@ -7,23 +7,34 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-<div class="min-h-screen w-full relative overflow-hidden flex">
-    <!-- Left: Login form panel (dark green tinted) -->
-    <div class="md:w-1/2 bg-gradient-to-r from-[#1a2e1a] via-black/70 to-black/80 p-8 md:p-16 flex flex-col justify-center text-white relative z-10">
-        <div class="max-w-md">
-            <h2 class="text-3xl font-bold text-white mb-2">Masuk</h2>
-            <p class="text-white/90 text-sm mb-8">
-                Silahkan masuk dengan akun Anda.
-            </p>
+<div class="fixed inset-0 w-screen h-screen z-50 overflow-hidden flex bg-[#172111]">
+
+    <!-- Background Image with Dark Gradient Overlay (Full Screen) -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ asset('images/login-bg.jpg') }}" alt="Background Login"
+             class="w-full h-full object-cover">
+        <!-- Gradasi gelap di sebelah kiri agar form mudah dibaca, dan transparan di kanan -->
+        <div class="absolute inset-0 bg-gradient-to-r from-[#172111]/95 via-[#172111]/80 to-black/50"></div>
+    </div>
+
+    <!-- Content Container -->
+    <div class="relative z-10 flex w-full h-full items-center p-6 md:p-16 lg:p-24">
+        <div class="w-full max-w-md">
+            <div class="mb-8">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">Masuk</h1>
+                <p class="text-white/80 text-base md:text-lg">
+                    Silahkan masuk dengan akun Anda.
+                </p>
+            </div>
 
             <form action="{{ route('login') }}" method="POST" class="space-y-5">
                 @csrf
 
                 <div>
-                    <label class="block text-white text-sm font-medium mb-1.5">E-mail</label>
+                    <label class="block text-white text-sm font-medium mb-1.5">No Telpon</label>
                     <div class="relative">
-                        <input type="email" name="email" placeholder="Masukkan e-mail anda"
-                               class="w-full pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all px-[20px]"
+                        <input type="email" name="email" placeholder="Masukkan e-mail anda..."
+                               class="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all"
                                required>
                     </div>
                 </div>
@@ -31,7 +42,7 @@
                 <div>
                     <label class="block text-white text-sm font-medium mb-1.5">Kata Sandi</label>
                     <input type="password" name="password" placeholder="••••••••"
-                           class="w-full pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all px-[20px]"
+                           class="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all"
                            required>
                 </div>
 
@@ -40,7 +51,7 @@
                         <input type="checkbox" name="remember" class="rounded text-emerald-400 bg-white/10 border-white/20 focus:ring-emerald-400">
                         Ingatkan saya
                     </label>
-                    <a href="#" class="text-emerald-400 hover:text-emerald-300">Lupa kata sandi?</a>
+                    <a href="{{ route('forgot-password') }}" class="text-emerald-400 hover:text-emerald-300">Lupa kata sandi?</a>
                 </div>
 
                 <button type="submit"
@@ -56,24 +67,6 @@
                 </a>
             </p>
         </div>
-    </div>
-
-    <!-- Right: Photo panel -->
-    <div class="md:w-1/2 hidden md:block relative">
-        <img src="{{ asset('images/login-bg.jpg') }}" alt="Masyarakat dan petugas"
-             class="w-full h-full object-cover opacity-80">
-        <div class="absolute inset-0 bg-black/30"></div>
-        <div class="absolute bottom-8 left-8 z-10">
-            <h3 class="text-white text-xl font-bold">SapaTrantib</h3>
-            <p class="text-white/90 text-sm">Membangun Masyarakat Yang Aman dan teratur.</p>
-        </div>
-    </div>
-
-    <!-- Mobile: image as full background with overlay -->
-    <div class="md:hidden absolute inset-0 z-0">
-        <img src="{{ asset('images/login-bg.jpg') }}" alt="Masyarakat dan petugas"
-             class="w-full h-full object-cover opacity-60">
-        <div class="absolute inset-0 bg-black/60"></div>
     </div>
 </div>
 @endsection
