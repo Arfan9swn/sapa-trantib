@@ -88,6 +88,17 @@ Route::get('/users/sa-user', function () {
     return view('users.sa-user');
 })->name('super-admin.user');
 
+// activities
+Route::get('/activities', function () {
+    return view('activities.log');
+})->name('activities.index');
+
+// logout
+Route::post('/logout', function () {
+    auth()->logout();
+    return redirect()->route('login');
+})->name('logout');
+
 //api-routes (d sini aja ga usah bikin separate file -> api.php)
 Route::apiResource('users', UserController::class);
 Route::apiResource('cats', CatController::class);
