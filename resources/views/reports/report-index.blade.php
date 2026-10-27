@@ -4,13 +4,6 @@
 
 @section('content')
 <div class="min-h-screen w-full relative overflow-hidden flex">
-    <!-- Left panel -->
-    <div class="md:w-1/2 bg-gradient-to-r from-[#1a2e1a] via-black/70 to-black/80 p-8 md:p-16 flex flex-col justify-center text-white relative z-10 hidden md:block">
-        <div class="max-w-md">
-            <h2 class="text-3xl font-bold text-white mb-2">Laporan Anda</h2>
-            <p class="text-white/90 text-sm mb-8">Kelola laporan yang sudah dikirim.</p>
-        </div>
-    </div>
 
     <!-- Main Content -->
     <div class="flex-1 p-8 md:p-16 bg-[#1a3326] min-h-screen">
@@ -81,22 +74,6 @@
                 @endforelse
             </div>
         </div>
-    </div>
-
-    <!-- Right: Photo panel (desktop only) -->
-    <div class="md:w-1/2 hidden md:block relative">
-        <img src="{{ asset('images/login-bg.jpg') }}" alt="Masyarakat dan petugas" class="w-full h-full object-cover opacity-80">
-        <div class="absolute inset-0 bg-black/30"></div>
-        <div class="absolute bottom-8 left-8 z-10">
-            <h3 class="text-white text-xl font-bold">SapaTrantib</h3>
-            <p class="text-white/90 text-sm">Membangun Masyarakat Yang Aman dan teratur.</p>
-        </div>
-    </div>
-
-    <!-- Mobile: image as full background with overlay -->
-    <div class="md:hidden absolute inset-0 z-0">
-        <img src="{{ asset('images/login-bg.jpg') }}" alt="Masyarakat dan petugas" class="w-full h-full object-cover opacity-60">
-        <div class="absolute inset-0 bg-black/60"></div>
     </div>
 </div>
 @endsection
