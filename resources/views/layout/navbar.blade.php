@@ -5,8 +5,7 @@
 
     <div class="flex items-center gap-4">
         <div class="text-right hidden md:block">
-            <p class="text-sm text-[#8fd89b] font-medium">Selamat datang kembali {{ $username }}</p>
-            <p class="text-xs text-[#a6d189] opacity-80">{{  $userRole }}</p>
+            
         </div>
         <div class="w-10 h-10 rounded-full bg-[#2d4a3a] flex items-center justify-center text-white text-sm font-medium border border-[#4a6a56]">
             U
