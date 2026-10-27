@@ -27,6 +27,10 @@ Route::get('/forgot-password', function () {
     return view('auth.forgot-password');
 })->name('forgot-password');
 
+Route::post('/password/update', function () {
+    return back()->with('success', 'Password berhasil diubah.');
+})->name('password.update');
+
 // landing page
 Route::get('/landing', function () {
     return view('auth.landing-page');
