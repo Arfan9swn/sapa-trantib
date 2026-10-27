@@ -49,7 +49,7 @@ class User extends Authenticatable
      */
     public function assignedReports(): HasMany
     {
-        return $this->hasMany(Report::class, 'assigned_to', 'user_id');
+        return $this->hasMany(Reps::class, 'assigned_to', 'user_id');
     }
 
     /**
@@ -57,6 +57,6 @@ class User extends Authenticatable
      */
     public function activities(): HasMany
     {
-        return $this->hasMany(ReportActivity::class, 'user_id', 'user_id');
+        return $this->hasMany(RepsActivity::class, 'user_id', 'user_id');
     }
 }
