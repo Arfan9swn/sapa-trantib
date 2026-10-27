@@ -23,6 +23,10 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
+Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->name('forgot-password');
+
 // landing page
 Route::get('/landing', function () {
     return view('auth.landing-page');

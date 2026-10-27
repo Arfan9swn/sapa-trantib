@@ -30,9 +30,9 @@
                 </div>
 
                 <div>
-                    <label class="block text-white text-sm font-medium mb-1.5">Kata Sandi</label>
+                    <label class="block text-white text-sm font-medium">Kata Sandi</label>
                     <input type="password" name="password" placeholder="••••••••"
-                           class="w-full pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all"
+                           class="w-full pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all px-[20px]"
                            required>
                 </div>
 
@@ -41,7 +41,7 @@
                         <input type="checkbox" name="remember" class="rounded text-emerald-400 bg-white/10 border-white/20 focus:ring-emerald-400">
                         Ingatkan saya
                     </label>
-                    <a href="#" class="text-emerald-400 hover:text-emerald-300">Lupa kata sandi?</a>
+                    <a href="{{ route('forgot-password') }}" class="text-emerald-400 hover:text-emerald-300">Lupa kata sandi?</a>
                 </div>
 
                 <button type="submit"
