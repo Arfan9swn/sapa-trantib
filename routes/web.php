@@ -59,7 +59,8 @@ Route::get('/categories/{category}/edit', function ($category) {
 
 // reps
 Route::get('/reports', function () {
-    return view('reports.report-index');
+    $reports = \App\Models\Reps::with('category', 'subCategory', 'comments', 'media')->latest()->get();
+    return view('reports.report-index', compact('reports'));
 })->name('reports.index');
 
 Route::get('/reports/create', function () {
@@ -67,12 +68,32 @@ Route::get('/reports/create', function () {
 })->name('reports.create');
 
 Route::get('/reports/{report}', function ($report) {
-    return view('reports.report-show', ['report' => $report]);
+    $report = \App\Models\Reps::with('category', 'subCategory', 'comments.user', 'media')->findOrFail($report);
+    return view('reports.report-show', compact('report'));
 })->name('reports.show');
 
 Route::get('/reports/admin', function () {
-    return view('reports.admin-report');
+    $reports = \App\Models\Reps::with('category', 'subCategory', 'comments', 'media')->latest()->get();
+    return view('reports.admin-report', compact('reports'));
 })->name('reports.admin');
+
+// report comments
+Route::post('/reports/{report}/comments', function ($report) {
+    $report = \App\Models\Reps::findOrFail($report);
+    $comment = \App\Models\RepsComment::create([
+        'report_id' => $report->report_id,
+        'body' => request('body'),
+        'created_at' => now(),
+    ]);
+    return back()->with('success', 'Komentar berhasil ditambahkan');
+})->name('reports.comments.store');
+
+// delete report
+Route::delete('/reports/{report}', function ($report) {
+    $report = \App\Models\Reps::findOrFail($report);
+    $report->delete();
+    return back()->with('success', 'Laporan berhasil dihapus');
+})->name('reports.destroy');
 
 // stats
 Route::get('/statistics', function () {

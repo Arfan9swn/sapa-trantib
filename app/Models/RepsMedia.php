@@ -14,6 +14,8 @@ class RepsMedia extends Model
 
     protected $primaryKey = 'media_id';
 
+    protected $table = 'report_media';
+
     public $timestamps = false;
 
     #[Fillable(['report_id', 'media_url', 'media_type', 'uploaded_at'])]

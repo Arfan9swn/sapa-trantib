@@ -13,6 +13,8 @@ class RepsComment extends Model
 
     protected $primaryKey = 'comment_id';
 
+    protected $table = 'report_comments';
+
     public $timestamps = false;
 
     #[Fillable(['report_id', 'body', 'created_at'])]
