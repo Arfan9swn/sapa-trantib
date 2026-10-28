@@ -23,8 +23,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
                 <div class="space-y-6 max-w-lg lg:max-w-none">
                     <h1 class="text-4xl lg:text-6xl font-lexend font-semibold text-white leading-[1.05] tracking-tight">
-                        Membantu warga untuk
-                        <span class="block leading-none">Membangun</span>
+                        Membantu warga untuk membangun
                     </h1>
                     <h2 class="text-4xl lg:text-6xl font-lexend font-semibold text-white leading-[1.05] tracking-tight mt-2">
                         Masyarakat Yang

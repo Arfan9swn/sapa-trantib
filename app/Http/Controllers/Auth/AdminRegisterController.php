@@ -50,8 +50,9 @@ class AdminRegisterController extends Controller
         }
 
         $request->session()->put('email', $user->email);
+        $request->session()->put('otp_for', 'admin_register');
 
-        return redirect()->route('admin.register.success')
-            ->with('status', 'Akun admin telah dibuat. Silakan verifikasi email Anda dan tunggu persetujuan super admin.');
+        return redirect()->route('otp')
+            ->with('status', 'Kode OTP telah dikirim ke email Anda. Silakan verifikasi untuk melanjutkan.');
     }
 }

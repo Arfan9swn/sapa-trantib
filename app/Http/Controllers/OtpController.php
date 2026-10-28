@@ -107,6 +107,13 @@ class OtpController extends Controller
             ]);
         }
 
+        // After OTP verification from admin registration, redirect to success page
+        if ($request->session()->get('otp_for') === 'admin_register') {
+            $request->session()->forget('otp_for');
+            return redirect()->route('admin.register.success')
+                ->with('status', 'Email telah diverifikasi. Akun admin Anda sekarang menunggu persetujuan super admin sebelum dapat masuk.');
+        }
+
         return redirect()->route('admin.login')
             ->with('status', 'Kode OTP telah diverifikasi. Akun Anda masih menunggu persetujuan super admin sebelum dapat masuk.');
     }
