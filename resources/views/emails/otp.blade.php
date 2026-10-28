@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kode OTP Anda - SapaTrantib</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body {
+        div {
             margin: 0;
             padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -14,8 +13,6 @@
             color: #ffffff;
         }
         .container {
-            max-width: 600px;
-            margin: 0 auto;
             padding: 40px 20px;
         }
         .logo {
@@ -24,7 +21,7 @@
             color: #ffffff;
             margin-bottom: 10px;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgb(255,255,255);
             display: inline-block;
             padding-bottom: 8px;
         }
@@ -53,7 +50,6 @@
         }
     </style>
 </head>
-<body>
     <div class="container">
         <div class="logo">Sapa-Trantib</div>
         <div class="title">KODE OTP ANDA</div>
@@ -62,5 +58,4 @@
             Jika anda merasa tidak pernah membuat akun untuk Sapa-Trantib, mohon abaikan pesan ini.
         </div>
     </div>
-</body>
 </html>
