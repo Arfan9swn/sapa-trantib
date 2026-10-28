@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminRegisterController;
+use App\Http\Controllers\CategoryManagementController;
 use App\Http\Controllers\OtpController;
 use App\Models\User;
 use App\Models\Reps;
@@ -193,6 +194,16 @@ Route::delete('/reports/{report}', function ($report) {
 Route::get('/statistics', function () {
     return view('statistics.statistics');
 })->name('statistics');
+
+// ---------------------------------------------------------------------------
+// Category Management (Admin / Super Admin)
+// ---------------------------------------------------------------------------
+Route::get('/admin/categories', [CategoryManagementController::class, 'index'])->name('admin-categories.index');
+Route::get('/admin/categories/create', [CategoryManagementController::class, 'create'])->name('admin-categories.create');
+Route::post('/admin/categories', [CategoryManagementController::class, 'store'])->name('admin-categories.store');
+Route::get('/admin/categories/{category}/edit', [CategoryManagementController::class, 'edit'])->name('admin-categories.edit');
+Route::put('/admin/categories/{category}', [CategoryManagementController::class, 'update'])->name('admin-categories.update');
+Route::delete('/admin/categories/{category}', [CategoryManagementController::class, 'destroy'])->name('admin-categories.destroy');
 
 // ---------------------------------------------------------------------------
 // Users (admin / CMS)
