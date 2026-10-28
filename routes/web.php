@@ -62,16 +62,26 @@ Route::get('/register', function () {
 Route::post('/register', function (Request $request) {
     $validated = $request->validate([
         'username' => 'required|string|max:255',
-        'email'    => 'required|email|max:255|unique:users',
+        'email'    => 'required|email|max:255',
         'password' => 'required|string|min:6',
     ]);
 
-    $user = User::create([
-        'username'      => $validated['username'],
-        'email'         => $validated['email'],
-        'password_hash' => bcrypt($validated['password']),
-        'role'          => 'warga',
-    ]);
+    $user = User::where('email', $validated['email'])->first();
+
+    if (! $user) {
+        $user = User::create([
+            'username'      => $validated['username'],
+            'email'         => $validated['email'],
+            'password_hash' => bcrypt($validated['password']),
+            'role'          => 'warga',
+        ]);
+    } else {
+        // Update username/password for existing account on re-registration
+        $user->update([
+            'username'      => $validated['username'],
+            'password_hash' => bcrypt($validated['password']),
+        ]);
+    }
 
     $otpCode   = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
     $expiresAt = now()->addMinutes(10);
@@ -87,12 +97,18 @@ Route::post('/register', function (Request $request) {
         'created_at' => now(),
     ]);
 
-    Mail::to($validated['email'])
-        ->send(new OtpMail($validated['email'], $otpCode));
+    try {
+        Mail::to($validated['email'])
+            ->send(new OtpMail($validated['email'], $otpCode));
+    } catch (\Throwable $e) {
+        report($e);
+    }
+
+    $request->session()->put('email', $validated['email']);
+    $request->session()->put('otp_code', $otpCode);
 
     return redirect()
         ->route('otp')
-        ->with('email', $validated['email'])
         ->with('status', 'Kode OTP telah dikirim ke email Anda.');
 })->name('register.post');
 
@@ -124,12 +140,18 @@ Route::post('/password/update', function (Request $request) {
         'created_at' => now(),
     ]);
 
-    Mail::to($validated['email'])
-        ->send(new OtpMail($validated['email'], $otpCode));
+    try {
+        Mail::to($validated['email'])
+            ->send(new OtpMail($validated['email'], $otpCode));
+    } catch (\Throwable $e) {
+        report($e);
+    }
+
+    $request->session()->put('email', $validated['email']);
+    $request->session()->put('otp_code', $otpCode);
 
     return redirect()
         ->route('otp')
-        ->with('email', $validated['email'])
         ->with('status', 'Kode OTP konfirmasi telah dikirim ke email Anda.');
 })->name('password.update');
 
@@ -150,6 +172,46 @@ Route::post('/otp/request', [OtpController::class, 'request'])
 
 Route::post('/otp/verify', [OtpController::class, 'verify'])
     ->name('otp.verify');
+
+Route::post('/otp/resend', function (Request $request) {
+    $email = $request->session()->get('email');
+
+    if (! $email) {
+        return back()->withErrors(['resend' => 'Email tidak ditemukan. Silakan daftar ulang.']);
+    }
+
+    $lastResend = $request->session()->get('otp_resend_at');
+    if ($lastResend && (now()->getTimestamp() - $lastResend) < 60) {
+        $remaining = 60 - (now()->getTimestamp() - $lastResend);
+        return back()->withErrors(['resend' => 'Tunggu ' . $remaining . ' detik sebelum mengirim ulang kode.']);
+    }
+
+    $otpCode   = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $expiresAt = now()->addMinutes(10);
+
+    OtpVerification::where('email', $email)
+        ->whereNull('used_at')
+        ->update(['used_at' => now()]);
+
+    OtpVerification::create([
+        'email'      => $email,
+        'otp_code'   => $otpCode,
+        'expires_at' => $expiresAt,
+        'created_at' => now(),
+    ]);
+
+    try {
+        Mail::to($email)->send(new OtpMail($email, $otpCode));
+    } catch (\Throwable $e) {
+        report($e);
+        return back()->withErrors(['resend' => 'Gagal mengirim email. Silakan coba lagi nanti.']);
+    }
+
+    $request->session()->put('otp_resend_at', now()->getTimestamp());
+    $request->session()->put('otp_code', $otpCode);
+
+    return back()->with('status', 'Kode OTP baru telah dikirim ke ' . $email);
+})->name('otp.resend');
 
 // ---------------------------------------------------------------------------
 // Categories

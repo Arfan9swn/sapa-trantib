@@ -32,16 +32,33 @@ class OtpController extends Controller
             'created_at' => now(),
         ]);
 
-        Mail::to($email)->send(new OtpMail($email, $otpCode));
+        try {
+            Mail::to($email)->send(new OtpMail($email, $otpCode));
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         return response()->json([
             'message' => 'Kode OTP telah dikirim ke email Anda',
             'email'   => $email,
+            'otp_code' => $otpCode,
         ]);
     }
 
     public function verify(Request $request)
     {
+        $email = $request->input('email', $request->session()->get('email'));
+        $otpCode = $request->input('otp_code');
+
+        if (! $otpCode && is_array($request->input('otp'))) {
+            $otpCode = implode('', array_values($request->input('otp')));
+        }
+
+        $request->merge([
+            'email' => $email,
+            'otp_code' => $otpCode,
+        ]);
+
         $validated = $request->validate([
             'email'    => 'required|email|max:255',
             'otp_code' => 'required|digits:6',
