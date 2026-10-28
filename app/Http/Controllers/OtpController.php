@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OtpMail;
 use App\Models\OtpVerification;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\Mail;
 
 class OtpController extends Controller
 {
-    
     public function request(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -26,34 +26,41 @@ class OtpController extends Controller
             ->update(['used_at' => now()]);
 
         OtpVerification::create([
-            'email' => $email,
-            'otp_code' => $otpCode,
+            'email'      => $email,
+            'otp_code'   => $otpCode,
             'expires_at' => $expiresAt,
             'created_at' => now(),
         ]);
 
-        Mail::send([], [], function ($message) use ($email, $otpCode) {
-            $message->to($email)
-                ->subject('Kode OTP Verifikasi - SapaTrantib')
-                ->setBody(
-                    "Kode OTP verifikasi Anda adalah: {$otpCode}\n" .
-                    "Kode ini berlaku selama 10 menit.\n" .
-                    "Jika Anda tidak meminta kode ini, abaikan email ini.",
-                    'text/plain'
-                );
-        });
+        try {
+            Mail::to($email)->send(new OtpMail($email, $otpCode));
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         return response()->json([
             'message' => 'Kode OTP telah dikirim ke email Anda',
-            'email' => $email,
+            'email'   => $email,
             'otp_code' => $otpCode,
         ]);
     }
 
-    public function verify(Request $request): JsonResponse
+    public function verify(Request $request)
     {
+        $email = $request->input('email', $request->session()->get('email'));
+        $otpCode = $request->input('otp_code');
+
+        if (! $otpCode && is_array($request->input('otp'))) {
+            $otpCode = implode('', array_values($request->input('otp')));
+        }
+
+        $request->merge([
+            'email' => $email,
+            'otp_code' => $otpCode,
+        ]);
+
         $validated = $request->validate([
-            'email' => 'required|email|max:255',
+            'email'    => 'required|email|max:255',
             'otp_code' => 'required|digits:6',
         ]);
 
@@ -63,31 +70,47 @@ class OtpController extends Controller
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$otp) {
-            return response()->json([
-                'message' => 'Kode OTP tidak valid atau sudah kadaluarsa.',
-            ], 422);
+        if (! $otp) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Kode OTP tidak valid atau sudah kadaluarsa.',
+                ], 422);
+            }
+
+            return back()
+                ->withErrors(['otp_code' => 'Kode OTP tidak valid atau sudah kadaluarsa.'])
+                ->withInput();
         }
 
         $otp->update(['used_at' => now()]);
 
         $user = User::where('email', $validated['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             $user = User::create([
-                'username' => 'user_' . uniqid(),
-                'email' => $validated['email'],
+                'username'      => 'user_' . uniqid(),
+                'email'         => $validated['email'],
                 'password_hash' => bcrypt('temp_password_' . uniqid()),
-                'role' => 'warga',
+                'role'          => 'warga',
             ]);
         }
 
         $user->update(['email_verified_at' => now()]);
 
-        return response()->json([
-            'message' => 'Email berhasil diverifikasi.',
-            'user_id' => $user->user_id,
-            'email_verified_at' => $user->email_verified_at,
-        ]);
+        // Log the user in via session (web guard)
+        $request->session()->put('auth_user_id', $user->user_id);
+        $request->session()->put('auth_user_role', $user->role);
+        $request->session()->regenerate();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message'           => 'Email berhasil diverifikasi.',
+                'user_id'           => $user->user_id,
+                'email_verified_at' => $user->email_verified_at,
+            ]);
+        }
+
+        return redirect()->route('reports.create')
+            ->with('status', 'Selamat datang! Akun Anda telah diverifikasi.');
     }
 }

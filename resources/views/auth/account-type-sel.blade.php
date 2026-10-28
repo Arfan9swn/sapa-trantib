@@ -18,7 +18,7 @@
 
         <div class="flex flex-wrap justify-center gap-6 md:gap-12">
             <!-- Admin -->
-            <a href="{{ route('login') }}" class="group relative w-64 h-80 rounded-[1.5rem] bg-[#4e5a44] p-8 text-center shadow-2xl shadow-black/60 transition-all duration-300 hover:scale-[1.025] hover:shadow-[#4e5a45]/45 flex flex-col items-center">
+            <a href="{{ route('admin.login') }}" class="group relative w-64 h-80 rounded-[1.5rem] bg-[#4e5a44] p-8 text-center shadow-2xl shadow-black/60 transition-all duration-300 hover:scale-[1.025] hover:shadow-[#4e5a45]/45 flex flex-col items-center">
                 <span class="text-white text-lg md:text-xl font-medium tracking-wide mb-10">Admin</span>
                 <div class="w-24 h-24 rounded-xl bg-[#161b16] flex items-center justify-center shadow-inner group-hover:bg-[#0f120f] transition-colors duration-300">
                     <div class="relative w-12 h-12 flex flex-col items-center justify-end">
@@ -29,7 +29,7 @@
             </a>
 
             <!-- Warga (selected state) -->
-            <a href="{{ route('reports.index') }}" class="group relative w-64 h-80 rounded-[1.5rem] bg-[#4e5a44] p-8 text-center shadow-2xl shadow-black/60 ring-1 ring-white/10 transition-all duration-300 hover:scale-[1.025] hover:shadow-[#4e5a45]/45 flex flex-col items-center">
+            <a href="{{ route('reports.create') }}" class="group relative w-64 h-80 rounded-[1.5rem] bg-[#4e5a44] p-8 text-center shadow-2xl shadow-black/60 ring-1 ring-white/10 transition-all duration-300 hover:scale-[1.025] hover:shadow-[#4e5a45]/45 flex flex-col items-center">
                 <span class="text-white text-lg md:text-xl font-medium tracking-wide mb-10">Warga</span>
                 <div class="w-24 h-24 rounded-xl bg-black flex items-center justify-center shadow-inner group-hover:bg-black transition-colors duration-300">
                     <div class="relative w-12 h-12 flex flex-col items-center justify-end">

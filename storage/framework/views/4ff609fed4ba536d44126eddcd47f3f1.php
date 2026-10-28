@@ -25,7 +25,7 @@
             }
         </style>
     </head>
-    <?php ($isAuthRoute = in_array(request()->path(), ['login', 'register', 'otp', 'account-type', 'landing'])); ?>
+    <?php ($isAuthRoute = in_array(request()->path(), ['/', 'login', 'register', 'otp', 'account-type', 'landing', 'forgot-password', '/admin/login', 'admin/login'])); ?>
     <body class="antialiased bg-[#1a3326] text-white min-h-screen <?php echo e($isAuthRoute ? 'flex items-center justify-center' : ''); ?>">
 
         <?php if(!$isAuthRoute): ?>
