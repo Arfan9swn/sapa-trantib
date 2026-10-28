@@ -30,6 +30,10 @@ Route::post('/admin/login', [AdminLoginController::class, 'store'])
     ->name('admin.login.post');
 
 // Admin registration
+Route::get('/account-type', function () {
+    return view('auth.account-type-sel');
+})->name('account.type');
+
 Route::get('/admin/register', function () {
     return view('auth.admin-register');
 })->name('admin.register');

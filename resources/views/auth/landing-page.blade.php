@@ -35,7 +35,7 @@
                         Dan bantu masyarakat sekitar hidup lebih aman dan teratur.
                     </p>
                     <div class="mt-4 lg:mt-8">
-                        <a href="{{ route('admin.login') }}" class="w-full lg:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-emerald-600 rounded-full hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all duration-200 shadow-xl shadow-emerald-900/40 hover:shadow-emerald-900/60">
+                        <a href="{{ route('account.type') }}" class="w-full lg:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-emerald-600 rounded-full hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all duration-200 shadow-xl shadow-emerald-900/40 hover:shadow-emerald-900/60">
                         Lapor
                         </a>
                     </div>
