@@ -65,16 +65,9 @@
             </form>
 
             <p class="mt-10 text-center text-white/80 text-sm">
-                Masuk sebagai warga?
-                <a href="{{ route('login') }}" class="text-emerald-400 hover:text-emerald-300 font-medium ml-1">
-                    Masuk sebagai warga
-                </a>
-            </p>
-
-            <p class="mt-6 text-center text-white/60 text-sm">
                 Belum punya akun admin?
-                <a href="{{ route('register') }}" class="text-emerald-400 hover:text-emerald-300 font-medium ml-1">
-                    Daftar admin
+                <a href="{{ route('admin.register') }}" class="text-emerald-400 hover:text-emerald-300 font-medium ml-1">
+                    Daftar akun admin
                 </a>
             </p>
         </div>

@@ -70,11 +70,11 @@
                 <span id="resendTimer" class="text-white/60 text-xs mt-2 block @if(!(session('otp_resend_at') && (now()->getTimestamp() - session('otp_resend_at')) < 60)) hidden @endif"></span>
             </form>
 
-            <!-- Link to change phone number -->
+            <!-- Link to change email -->
             <div class="mt-8 text-center text-white/70 text-sm">
                 Salah Email ?
-                <a href="{{ route('register') }}" class="text-emerald-400 hover:text-emerald-300 font-medium ml-1">
-                    Klik di sini untuk mengganti Email anda.
+                <a href="{{ route('admin.login') }}" class="text-emerald-400 hover:text-emerald-300 font-medium ml-1">
+                    Klik di sini untuk kembali ke halaman masuk admin.
                 </a>
             </div>
 
@@ -89,10 +89,10 @@
         if (navEntries.length > 0 && navEntries[0].type === 'reload') {
             var accepted = confirm(
                 'Anda sedang merefresh halaman verifikasi OTP. ' +
-                'Jika Anda melanjutkan, Anda akan dikembalikan ke halaman pendaftaran.'
+                'Jika Anda melanjutkan, Anda akan dikembalikan ke halaman masuk admin.'
             );
             if (accepted) {
-                window.location.href = '{{ route('register') }}';
+                window.location.href = '{{ route('admin.login') }}';
             }
         }
     });

@@ -87,30 +87,27 @@ class OtpController extends Controller
         $user = User::where('email', $validated['email'])->first();
 
         if (! $user) {
-            $user = User::create([
-                'username'      => 'user_' . uniqid(),
-                'email'         => $validated['email'],
-                'password_hash' => bcrypt('temp_password_' . uniqid()),
-                'role'          => 'warga',
-            ]);
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Akun belum terdaftar. Hubungi super admin untuk membuat akun admin.',
+                ], 422);
+            }
+
+            return back()
+                ->withErrors(['otp_code' => 'Akun belum terdaftar. Hubungi super admin untuk membuat akun admin.'])
+                ->withInput();
         }
 
-        $user->update(['email_verified_at' => now()]);
-
-        // Log the user in via session (web guard)
-        $request->session()->put('auth_user_id', $user->user_id);
-        $request->session()->put('auth_user_role', $user->role);
-        $request->session()->regenerate();
-
+        // OTP confirms email ownership but does NOT grant access.
+        // Account remains on hold (email_verified_at = null) until super admin verifies.
         if ($request->wantsJson()) {
             return response()->json([
-                'message'           => 'Email berhasil diverifikasi.',
-                'user_id'           => $user->user_id,
-                'email_verified_at' => $user->email_verified_at,
+                'message' => 'Kode OTP telah diverifikasi. Silakan tunggu super admin menyetujui akun Anda.',
+                'user_id' => $user->user_id,
             ]);
         }
 
-        return redirect()->route('reports.create')
-            ->with('status', 'Selamat datang! Akun Anda telah diverifikasi.');
+        return redirect()->route('admin.login')
+            ->with('status', 'Kode OTP telah diverifikasi. Akun Anda masih menunggu persetujuan super admin sebelum dapat masuk.');
     }
 }

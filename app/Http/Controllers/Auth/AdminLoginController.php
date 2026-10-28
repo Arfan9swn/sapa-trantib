@@ -30,6 +30,12 @@ class AdminLoginController extends Controller
                 ->withInput();
         }
 
+        if ($user->email_verified_at === null) {
+            return back()
+                ->withErrors(['email' => 'Akun Anda masih menunggu verifikasi dari super admin.'])
+                ->withInput();
+        }
+
         $request->session()->put('auth_user_id', $user->user_id);
         $request->session()->put('auth_user_role', $user->role);
         $request->session()->regenerate();

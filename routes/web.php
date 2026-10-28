@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AdminLoginController;
+use App\Http\Controllers\Auth\AdminRegisterController;
 use App\Http\Controllers\OtpController;
 use App\Models\User;
 use App\Models\Reps;
@@ -12,38 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 
 // ---------------------------------------------------------------------------
-// Landing / Account Type Selection (guest entry point)
+// AUTH — Admin only
 // ---------------------------------------------------------------------------
-Route::get('/', function () {
-    return view('auth.account-type-sel');
-})->name('account-type');
-
-// ---------------------------------------------------------------------------
-// AUTH — Warga (email/password) + Admin (admin/email+password)
-// ---------------------------------------------------------------------------
-
-// Warga login form
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-// Warga login POST (email + password)
-Route::post('/login', function (Request $request) {
-    $credentials = $request->validate([
-        'email'    => 'required|email',
-        'password' => 'required',
-    ]);
-
-    if (auth()->guard('web')->attempt($credentials)) {
-        $request->session()->regenerate();
-
-        return redirect()->route('reports.create');
-    }
-
-    return back()
-        ->withErrors(['email' => 'Kredensial tidak sesuai.'])
-        ->withInput();
-})->name('login.post');
 
 // Admin login form
 Route::get('/admin/login', function () {
@@ -54,114 +25,21 @@ Route::get('/admin/login', function () {
 Route::post('/admin/login', [AdminLoginController::class, 'store'])
     ->name('admin.login.post');
 
-// Register (warga)
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
+// Admin registration
+Route::get('/admin/register', function () {
+    return view('auth.admin-register');
+})->name('admin.register');
 
-Route::post('/register', function (Request $request) {
-    $validated = $request->validate([
-        'username' => 'required|string|max:255',
-        'email'    => 'required|email|max:255',
-        'password' => 'required|string|min:6',
-    ]);
+Route::post('/admin/register', [AdminRegisterController::class, 'store'])
+    ->name('admin.register.post');
 
-    $user = User::where('email', $validated['email'])->first();
-
-    if (! $user) {
-        $user = User::create([
-            'username'      => $validated['username'],
-            'email'         => $validated['email'],
-            'password_hash' => bcrypt($validated['password']),
-            'role'          => 'warga',
-        ]);
-    } else {
-        // Update username/password for existing account on re-registration
-        $user->update([
-            'username'      => $validated['username'],
-            'password_hash' => bcrypt($validated['password']),
-        ]);
-    }
-
-    $otpCode   = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $expiresAt = now()->addMinutes(10);
-
-    OtpVerification::where('email', $validated['email'])
-        ->whereNull('used_at')
-        ->update(['used_at' => now()]);
-
-    OtpVerification::create([
-        'email'      => $validated['email'],
-        'otp_code'   => $otpCode,
-        'expires_at' => $expiresAt,
-        'created_at' => now(),
-    ]);
-
-    try {
-        Mail::to($validated['email'])
-            ->send(new OtpMail($validated['email'], $otpCode));
-    } catch (\Throwable $e) {
-        report($e);
-    }
-
-    $request->session()->put('email', $validated['email']);
-    $request->session()->put('otp_code', $otpCode);
-
-    return redirect()
-        ->route('otp')
-        ->with('status', 'Kode OTP telah dikirim ke email Anda.');
-})->name('register.post');
-
-Route::post('/password/update', function (Request $request) {
-    $validated = $request->validate([
-        'email'                 => 'required|email|max:255',
-        'password'              => 'required|string|min:6',
-        'password_confirmation' => 'required|same:password',
-    ]);
-
-    $user = User::where('email', $validated['email'])->first();
-    if (! $user) {
-        return back()->withErrors(['email' => 'Email tidak terdaftar.']);
-    }
-
-    $user->update(['password_hash' => bcrypt($validated['password'])]);
-
-    $otpCode   = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $expiresAt = now()->addMinutes(10);
-
-    OtpVerification::where('email', $validated['email'])
-        ->whereNull('used_at')
-        ->update(['used_at' => now()]);
-
-    OtpVerification::create([
-        'email'      => $validated['email'],
-        'otp_code'   => $otpCode,
-        'expires_at' => $expiresAt,
-        'created_at' => now(),
-    ]);
-
-    try {
-        Mail::to($validated['email'])
-            ->send(new OtpMail($validated['email'], $otpCode));
-    } catch (\Throwable $e) {
-        report($e);
-    }
-
-    $request->session()->put('email', $validated['email']);
-    $request->session()->put('otp_code', $otpCode);
-
-    return redirect()
-        ->route('otp')
-        ->with('status', 'Kode OTP konfirmasi telah dikirim ke email Anda.');
-})->name('password.update');
-
-// Forgot-password placeholder
-Route::get('/forgot-password', function () {
-    return redirect()->route('login');
-})->name('forgot-password');
+// Admin registration success page
+Route::get('/admin/register-success', function () {
+    return view('auth.register-success');
+})->name('admin.register.success');
 
 // ---------------------------------------------------------------------------
-// OTP (warga verification — session based, redirects after login)
+// OTP (admin email verification — session based)
 // ---------------------------------------------------------------------------
 Route::get('/otp', function () {
     return view('auth.otp');
@@ -212,6 +90,38 @@ Route::post('/otp/resend', function (Request $request) {
 
     return back()->with('status', 'Kode OTP baru telah dikirim ke ' . $email);
 })->name('otp.resend');
+
+// ---------------------------------------------------------------------------
+// Super admin — verify pending admins
+// ---------------------------------------------------------------------------
+Route::get('/admin/pending', function () {
+    $pendingAdmins = User::where('role', 'admin')
+        ->whereNull('email_verified_at')
+        ->get();
+
+    return view('users.sa-user', ['pendingAdmins' => $pendingAdmins]);
+})->name('admin.pending');
+
+Route::post('/admin/verify/{user}', function (Request $request, User $user) {
+    if (auth()->user() === null || auth()->user()->role !== 'super_admin') {
+        return back()->withErrors(['error' => 'Hanya super admin yang dapat memverifikasi admin.']);
+    }
+
+    if ($user->role !== 'admin') {
+        return back()->withErrors(['error' => 'Hanya akun admin yang dapat diverifikasi.']);
+    }
+
+    $user->update(['email_verified_at' => now()]);
+
+    return back()->with('status', 'Admin ' . $user->email . ' telah diverifikasi dan dapat masuk.');
+})->name('admin.verify');
+
+// ---------------------------------------------------------------------------
+// Forgot-password placeholder
+// ---------------------------------------------------------------------------
+Route::get('/forgot-password', function () {
+    return redirect()->route('admin.login');
+})->name('forgot-password');
 
 // ---------------------------------------------------------------------------
 // Categories
@@ -292,7 +202,11 @@ Route::get('/users/{user}/edit', function ($user) {
 })->name('users.edit');
 
 Route::get('/users/sa-user', function () {
-    return view('users.sa-user');
+    $pendingAdmins = User::where('role', 'admin')
+        ->whereNull('email_verified_at')
+        ->get();
+
+    return view('users.sa-user', ['pendingAdmins' => $pendingAdmins]);
 })->name('super-admin.user');
 
 // ---------------------------------------------------------------------------
@@ -314,7 +228,7 @@ Route::post('/logout', function () {
     }
     session()->invalidate();
     session()->regenerateToken();
-    return redirect()->route('login');
+    return redirect()->route('admin.login');
 })->name('logout');
 
 // ---------------------------------------------------------------------------

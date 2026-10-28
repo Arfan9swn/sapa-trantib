@@ -68,7 +68,6 @@
     <div class="p-6">
         <form action="{{ route('logout') }}" method="POST" class="w-full">
             @csrf
-            @method('POST')
             <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg bg-[#a63d3d] hover:bg-[#8f3333] transition-colors text-white border border-[#c96b6b]">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
