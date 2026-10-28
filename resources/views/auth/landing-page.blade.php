@@ -9,7 +9,7 @@
 
     <div class="min-h-screen bg-slate-950 text-slate-200 relative overflow-hidden" style="--font-serif: 'Playfair Display', ui-serif, serif;">
         <!-- Subtle green glow on the left side -->
-        <div class="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-emerald-900/20 via-transparent to-transparent -z-10 pointer-events-none"></div>
+        <div class="absolute top-0 left-0 w-1/3 h-full via-transparent to-transparent -z-10 pointer-events-none"></div>
 
         <!-- Navbar (Sapa-Trantib at top-left, no login/register) -->
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -35,7 +35,7 @@
                         Dan bantu masyarakat sekitar hidup lebih aman dan teratur.
                     </p>
                     <div class="mt-4 lg:mt-8">
-                        <a href="{{ route('reports.create') }}" class="w-full lg:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-emerald-600 rounded-full hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all duration-200 shadow-xl shadow-emerald-900/40 hover:shadow-emerald-900/60">
+                        <a href="{{ route('admin.login') }}" class="w-full lg:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-emerald-600 rounded-full hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all duration-200 shadow-xl shadow-emerald-900/40 hover:shadow-emerald-900/60">
                         Lapor
                         </a>
                     </div>

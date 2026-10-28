@@ -12,6 +12,10 @@ use App\Models\OtpVerification;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 
+Route::get('/', function () {
+    return view('auth.landing-page');
+});
+
 // ---------------------------------------------------------------------------
 // AUTH — Admin only
 // ---------------------------------------------------------------------------
