@@ -15,8 +15,6 @@ class Cat extends Model
 
     protected $table = 'categories';
 
-    public $timestamps = false;
-
     #[Fillable(['name'])]
     protected $fillable = ['name'];
 

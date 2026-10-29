@@ -1,4 +1,4 @@
-<aside class="w-64 bg-[#2d4a3a] border-r border-[#4a6a56] flex flex-col h-screen z-10 sidebar-scroll">
+<aside class="w-64 bg-[#2d4a3a] border-r border-[#4a6a56] flex flex-col min-h-[calc(100vh-4rem)] z-10 sidebar-scroll">
     <!-- Sidebar header / brand area (optional, navbar already has brand) -->
     <div class="p-6"></div>
 

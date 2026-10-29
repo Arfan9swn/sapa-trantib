@@ -45,11 +45,15 @@
                         <h3 class="text-xl font-bold text-white">{{ $category->name }}</h3>
                         <p class="text-white/60 text-sm">{{ $category->sub_categories_count }} Sub kategori</p>
                     </div>
-                    <button onclick="confirmDelete({{ $category->category_id }})" class="text-white/40 hover:text-red-400 transition-colors">
+                    <form action="{{ route('admin-categories.destroy', $category->category_id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini? Semua sub kategori di dalamnya juga akan dihapus.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="text-white/40 hover:text-red-400 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                         </svg>
                     </button>
+                </form>
                 </div>
 
                 <a href="{{ route('admin-categories.edit', $category->category_id) }}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 mt-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm font-medium hover:bg-white/20 transition-colors">
@@ -71,26 +75,3 @@
 
 </div>
 
-@push('scripts')
-<script>
-function confirmDelete(categoryId) {
-    if (confirm('Apakah Anda yakin ingin menghapus kategori ini? Semua sub kategori di dalamnya juga akan dihapus.')) {
-        fetch('{{ route('admin-categories.destroy', 0) }}'.replace('0', categoryId), {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                window.location.reload();
-            } else {
-                alert('Gagal menghapus kategori.');
-            }
-        })
-        .catch(() => alert('Gagal menghapus kategori.'));
-    }
-}
-</script>
-@endpush

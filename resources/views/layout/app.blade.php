@@ -26,20 +26,25 @@
         </style>
     </head>
     @php($isAuthRoute = in_array(request()->path(), ['otp', '/admin/login', 'admin/login', 'forgot-password', 'admin/register', 'admin/register-success', '/', 'account-type']))
-    <body class="antialiased bg-[#1a3326] text-white min-h-screen {{ $isAuthRoute ? 'flex items-center justify-center' : '' }}">
+    <body class="antialiased bg-[#1a3326] text-white min-h-screen">
 
         @if (!$isAuthRoute)
             <!-- Navbar -->
-            @include('layout.navbar')
+            <nav class="sticky top-0 z-20">
+                @include('layout.navbar')
+            </nav>
 
-            <div class="flex h-screen overflow-hidden">
-                <!-- Sidebar -->
-                @include('layout.sidebar')
+            <!-- Main wrapper: navbar stacks on top, then sidebar+content row -->
+            <div class="flex flex-col min-h-screen">
+                <div class="flex flex-1 overflow-hidden">
+                    <!-- Sidebar -->
+                    @include('layout.sidebar')
 
-                <!-- Main Content -->
-                <main class="flex-1 overflow-y-auto bg-[#1a3326] relative z-0">
-                    @yield('content')
-                </main>
+                    <!-- Main Content -->
+                    <main class="flex-1 overflow-y-auto bg-[#1a3326] relative z-0 pt-6">
+                        @yield('content')
+                    </main>
+                </div>
             </div>
         @else
             <!-- Auth page: full screen content, no navbar/sidebar -->
@@ -47,5 +52,6 @@
                 @yield('content')
             </div>
         @endif
+@stack('scripts')
     </body>
 </html>

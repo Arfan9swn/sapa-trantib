@@ -9,16 +9,13 @@ use Illuminate\Support\Facades\Session;
 
 class CategoryManagementController extends Controller
 {
-    public function __construct()
+    /** Ensure user is authenticated and has admin/super_admin role */
+    protected function authenticateAdmin()
     {
-        // Protect all methods: must be authenticated as admin or super_admin
-        $this->middleware(function ($request, $next) {
-            $userRole = Session::get('auth_user_role') ?? 'warga';
-            if (!in_array($userRole, ['admin', 'super_admin'])) {
-                return redirect()->route('admin.login')->withErrors(['error' => 'Akses admin diperlukan.']);
-            }
-            return $next($request);
-        });
+        $userRole = Session::get('auth_user_role') ?? 'warga';
+        if (!in_array($userRole, ['admin', 'super_admin'])) {
+            return redirect()->route('admin.login')->withErrors(['error' => 'Akses admin diperlukan.']);
+        }
     }
 
     /**
@@ -82,7 +79,7 @@ class CategoryManagementController extends Controller
     public function update(Request $request, Cat $category)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:50|unique:categories,name,' . $category->category_id,
+            'name' => 'required|string|max:50|unique:categories,name,' . $category->category_id . ',category_id',
             'sub_categories' => 'nullable|array',
             'sub_categories.*' => 'nullable|string|max:100',
             'sub_category_ids' => 'nullable|array',
@@ -90,6 +87,37 @@ class CategoryManagementController extends Controller
             'deleted_sub_category_ids' => 'nullable|array',
             'deleted_sub_category_ids.*' => 'nullable|integer|exists:sub_categories,sub_category_id',
         ]);
+
+        $category->load('subCategories');
+
+        // Detect whether anything actually changed before saving.
+        $nameChanged = trim($validated['name']) !== trim($category->name);
+        $deletedIds  = array_filter($validated['deleted_sub_category_ids'] ?? []);
+        $keepIds     = $validated['sub_category_ids'] ?? [];
+        $submittedSubs = $validated['sub_categories'] ?? [];
+
+        $added = count($submittedSubs) > count($keepIds);
+        $renamed = false;
+        foreach ($keepIds as $i => $id) {
+            if (!$id) {
+                continue;
+            }
+            $subCat = SubCat::find($id);
+            $submittedName = isset($submittedSubs[$i]) ? trim($submittedSubs[$i]) : '';
+            if ($subCat && $submittedName !== '' && trim($subCat->name) !== $submittedName) {
+                $renamed = true;
+                break;
+            }
+        }
+        $removed = !empty($deletedIds);
+
+        if (!($nameChanged || $added || $renamed || $removed)) {
+            $message = 'Tidak ada perubahan. Silakan rename kategori, tambah sub kategori, atau rename sub kategori sebelum menyimpan.';
+
+            return redirect()->back()->withInput()
+                ->with('warning', $message)
+                ->withErrors(['changes' => $message]);
+        }
 
         $category->update(['name' => $validated['name']]);
 

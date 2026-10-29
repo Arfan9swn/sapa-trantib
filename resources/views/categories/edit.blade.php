@@ -16,6 +16,12 @@
         </a>
     </div>
 
+    @if(session('warning'))
+        <div class="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-yellow-200 text-sm">
+            {{ session('warning') }}
+        </div>
+    @endif
+
     @if($errors->any())
         <div class="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-200 text-sm">
             <ul class="list-disc list-inside">
@@ -26,8 +32,11 @@
         </div>
     @endif
 
+    <div id="noChangeWarning" class="hidden mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-yellow-200 text-sm">
+        Tidak ada perubahan. Silakan rename kategori, tambah sub kategori, atau rename sub kategori sebelum menyimpan.
+    </div>
     <div class="bg-[#2d4a3a] rounded-2xl p-8 sm:p-12 border border-[#4a6a56] shadow-xl">
-        <form action="{{ route('admin-categories.update', $category->category_id) }}" method="POST" class="space-y-8">
+        <form action="{{ route('admin-categories.update', $category->category_id) }}" method="POST" class="space-y-8" id="editCategoryForm">
             @csrf
             @method('PUT')
 
@@ -66,7 +75,11 @@
                 </div>
             </div>
 
-            <div class="pt-4">
+            <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                <a href="{{ route('admin-categories.index') }}"
+                    class="w-full sm:w-auto px-6 py-4 rounded-xl border border-white/20 text-white font-semibold text-base text-center hover:bg-white/10 transition-colors">
+                    Batal
+                </a>
                 <button type="submit"
                     class="w-full py-4 rounded-xl bg-emerald-600 text-white font-semibold text-base hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-900/40">
                     Simpan Perubahan
@@ -78,6 +91,56 @@
 
 @push('scripts')
 <script>
+    const originalCategoryName = @json($category->name);
+    const originalSubCategoryNames = @json($category->subCategories->pluck('name', 'sub_category_id'));
+    const deletedSubCategoryIds = [];
+
+    function hasChanges() {
+        const nameInput = document.querySelector('input[name="name"]');
+        if (nameInput.value.trim() !== originalCategoryName.trim()) {
+            return true;
+        }
+
+        const rows = document.querySelectorAll('#subCategoriesContainer .sub-category-row, #subCategoriesContainer .new-sub-row');
+        // New subcategories (rows without id input) with non-empty value
+        document.querySelectorAll('#subCategoriesContainer > div').forEach((row) => {
+            const idInput = row.querySelector('input[name="sub_category_ids[]"]');
+            const textInput = row.querySelector('input[name="sub_categories[]"]');
+            if (!textInput) return;
+            const value = textInput.value.trim();
+            if (!idInput) {
+                if (value !== '') {
+                    // added
+                    window.__added = true;
+                }
+            } else {
+                const id = idInput.value;
+                const original = (originalSubCategoryNames[id] || '').trim();
+                if (original !== '' && value !== original) {
+                    window.__renamed = true;
+                }
+            }
+        });
+
+        if (window.__added || window.__renamed) return true;
+        if (deletedSubCategoryIds.length > 0) return true;
+        return false;
+    }
+
+    const form = document.getElementById('editCategoryForm');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            window.__added = false;
+            window.__renamed = false;
+            if (!hasChanges()) {
+                e.preventDefault();
+                const warning = document.getElementById('noChangeWarning');
+                if (warning) warning.classList.remove('hidden');
+                return false;
+            }
+        });
+    }
+
     function addSubCategory() {
         const container = document.getElementById('subCategoriesContainer');
         const row = document.createElement('div');
@@ -99,6 +162,7 @@
         const idInput = row.querySelector('input[name="sub_category_ids[]"]');
         if (idInput) {
             row.style.display = 'none';
+            deletedSubCategoryIds.push(idInput.value);
             const deletedInput = document.createElement('input');
             deletedInput.type = 'hidden';
             deletedInput.name = 'deleted_sub_category_ids[]';
