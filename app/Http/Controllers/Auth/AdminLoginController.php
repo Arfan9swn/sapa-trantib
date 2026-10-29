@@ -38,6 +38,7 @@ class AdminLoginController extends Controller
 
         $request->session()->put('auth_user_id', $user->user_id);
         $request->session()->put('auth_user_role', $user->role);
+        $request->session()->put('auth_user_name', $user->username);
         $request->session()->regenerate();
 
         return redirect()->intended(route('reports.admin'));
