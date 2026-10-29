@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminRegisterController;
 use App\Http\Controllers\CategoryManagementController;
+use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\OtpController;
 use App\Models\User;
 use App\Models\Reps;
@@ -208,18 +209,13 @@ Route::delete('/admin/categories/{category}', [CategoryManagementController::cla
 // ---------------------------------------------------------------------------
 // Users (admin / CMS)
 // ---------------------------------------------------------------------------
-Route::get('/users', function () {
-    return view('users.user-index');
-})->name('users.index');
-
-Route::get('/users/{user}', function ($user) {
-    return view('users.user-show', ['user' => $user]);
-})->name('users.show');
-
-Route::get('/users/{user}/edit', function ($user) {
-    return view('users.user-edit', ['user' => $user]);
-})->name('users.edit');
-
+Route::get('/users', [UserManagementController::class, 'index'])->name('admin-users.index');
+Route::get('/users/create', [UserManagementController::class, 'create'])->name('admin-users.create');
+Route::post('/users', [UserManagementController::class, 'store'])->name('admin-users.store');
+Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('admin-users.show');
+Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('admin-users.edit');
+Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('admin-users.update');
+Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('admin-users.destroy');
 Route::get('/users/sa-user', function () {
     $pendingAdmins = User::where('role', 'admin')
         ->whereNull('email_verified_at')
@@ -253,10 +249,12 @@ Route::post('/logout', function () {
 // ---------------------------------------------------------------------------
 // Admin / CMS — API Resources (fully qualified controllers)
 // ---------------------------------------------------------------------------
-Route::apiResource('users',         \App\Http\Controllers\UserController::class);
-Route::apiResource('cats',          \App\Http\Controllers\CatController::class);
-Route::apiResource('s-cats',        \App\Http\Controllers\SubCatController::class);
-Route::apiResource('reps',          \App\Http\Controllers\RepsController::class);
-Route::apiResource('rep-media',     \App\Http\Controllers\RepsMediaController::class);
-Route::apiResource('rep-comments',  \App\Http\Controllers\RepsCommentController::class);
-Route::apiResource('rep-activity',  \App\Http\Controllers\RepsActivityController::class);
+Route::prefix('api')->name('api.')->group(function () {
+    Route::apiResource('users',         \App\Http\Controllers\UserController::class);
+    Route::apiResource('cats',          \App\Http\Controllers\CatController::class);
+    Route::apiResource('s-cats',        \App\Http\Controllers\SubCatController::class);
+    Route::apiResource('reps',          \App\Http\Controllers\RepsController::class);
+    Route::apiResource('rep-media',     \App\Http\Controllers\RepsMediaController::class);
+    Route::apiResource('rep-comments',  \App\Http\Controllers\RepsCommentController::class);
+    Route::apiResource('rep-activity',  \App\Http\Controllers\RepsActivityController::class);
+});
