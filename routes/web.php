@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminRegisterController;
 use App\Http\Controllers\CategoryManagementController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\UserTagController;
 use App\Http\Controllers\OtpController;
 use App\Models\User;
 use App\Models\Reps;
@@ -223,6 +224,15 @@ Route::get('/users/sa-user', function () {
 
     return view('users.sa-user', ['pendingAdmins' => $pendingAdmins]);
 })->name('super-admin.user');
+
+// User Tag Management (CRUD)
+Route::get('/admin/user-tags', [UserTagController::class, 'index'])->name('admin-user-tags.index');
+Route::get('/admin/user-tags/create', [UserTagController::class, 'create'])->name('admin-user-tags.create');
+Route::post('/admin/user-tags', [UserTagController::class, 'store'])->name('admin-user-tags.store');
+Route::get('/admin/user-tags/{tag}/edit', [UserTagController::class, 'edit'])->name('admin-user-tags.edit');
+Route::put('/admin/user-tags/{tag}', [UserTagController::class, 'update'])->name('admin-user-tags.update');
+Route::delete('/admin/user-tags/{tag}', [UserTagController::class, 'destroy'])->name('admin-user-tags.destroy');
+Route::post('/admin/user-tags/apply', [UserTagController::class, 'apply'])->name('admin-user-tags.apply');
 
 // ---------------------------------------------------------------------------
 // Activities

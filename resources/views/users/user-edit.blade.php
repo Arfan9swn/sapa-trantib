@@ -58,6 +58,21 @@
                     <option value="super_admin" {{ old('role', $user->role) === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                 </select>
             </div>
+<div>
+                <label class="block text-sm font-medium text-white/90 mb-2">User Type</label>
+                <select name="user_type" class="w-full px-4 py-3 rounded-xl bg-white text-[#1a3326] text-base border-0 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors">
+                    <option value="warga" {{ old('user_type', $user->user_type) === 'warga' ? 'selected' : '' }}>Warga</option>
+                    <option value="petugas" {{ old('user_type', $user->user_type) === 'petugas' ? 'selected' : '' }}>Petugas</option>
+                    <option value="vip" {{ old('user_type', $user->user_type) === 'vip' ? 'selected' : '' }}>VIP</option>
+                    <option value="moderator" {{ old('user_type', $user->user_type) === 'moderator' ? 'selected' : '' }}>Moderator</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-white/90 mb-2">Warna Tag</label>
+                <input type="color" name="user_type_color" value="{{ old('user_type_color', $user->user_type_color) }}" class="w-full px-4 py-3 rounded-xl bg-white text-[#1a3326] text-base border-0 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors">
+                <p class="text-white/60 text-sm mt-1">Pilih warna untuk tag pengguna</p>
+            </div>
 
             <div class="pt-4 flex flex-col sm:flex-row gap-3">
                 <a href="{{ route('admin-users.show', $user->user_id) }}"

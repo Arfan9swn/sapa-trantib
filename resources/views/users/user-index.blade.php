@@ -14,18 +14,30 @@
             <h1 class="text-2xl font-bold text-white">List pengguna yang terdaftar</h1>
             <p class="text-white/60 text-sm">Kelola akun pengguna</p>
         </div>
-        <a href="{{ route('admin-users.create') }}" class="inline-flex items-center justify-center w-full lg:w-auto px-6 py-3 text-sm font-medium text-white bg-emerald-600 rounded-xl hover:bg-emerald-500 transition-colors"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Tambah user</a>
+        <div class="flex flex-col sm:flex-row gap-3">
+            @if($isSuperAdmin)
+            <a href="{{ route('admin-user-tags.index') }}" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-[#4a6a56] rounded-xl hover:bg-[#3d5c4c] transition-colors">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                Kelola User Tags
+            </a>
+            @endif
+            <a href="{{ route('admin-users.create') }}" class="inline-flex items-center justify-center w-full lg:w-auto px-6 py-3 text-sm font-medium text-white bg-emerald-600 rounded-xl hover:bg-emerald-500 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Tambah user
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
-        <div class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-200 text-sm">{{ session('success') }}</div>
+    <div class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-200 text-sm">{{ session('success') }}</div>
     @endif
     @if(session('error'))
-        <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-200 text-sm">{{ session('error') }}</div>
+    <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-200 text-sm">{{ session('error') }}</div>
     @endif
     @if(session('info'))
-        <div class="mb-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-200 text-sm">{{ session('info') }}</div>
+    <div class="mb-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-200 text-sm">{{ session('info') }}</div>
     @endif
+
     <div class="bg-[#2d4a3a] rounded-2xl border border-[#4a6a56] overflow-hidden shadow-lg">
         <div class="p-6">
             <form action="{{ route('admin-users.index') }}" method="GET" class="flex flex-col sm:flex-row gap-4 mb-6">
@@ -40,16 +52,17 @@
                             <th class="px-4 py-3 text-white/70 text-sm font-medium">ID</th>
                             <th class="px-4 py-3 text-white/70 text-sm font-medium">Nama</th>
                             <th class="px-4 py-3 text-white/70 text-sm font-medium">Role</th>
+                            <th class="px-4 py-3 text-white/70 text-sm font-medium">Tag</th>
                             @if($isSuperAdmin)<th class="px-4 py-3 text-white/70 text-sm font-medium text-center">Aksi</th>@endif
                         </tr>
                     </thead>
                     <tbody>
-                        @if($users->isEmpty())
-                            <tr><td colspan="{{ $isSuperAdmin ? 4 : 3 }}" class="px-4 py-8 text-center text-white/50">Tidak ada pengguna ditemukan.</td></tr>
+@if($users->isEmpty())
+                            <tr><td colspan="{{ $isSuperAdmin ? 5 : 4 }}" class="px-4 py-8 text-center text-white/50">Tidak ada pengguna ditemukan.</td></tr>
                         @else
                             @foreach($users as $user)
                                 <?php $isOwn = $user->user_id == $currentUserId; ?>
-                                <tr class="border-b border-[#4a6a56]/50 last:border-0 hover:bg-[#3d5c4c]/30 transition-colors">
+                                <tr class="border-b border-[#4a6a56]/50 last:border-0 hover:bg-[#3d5c4c]/30 transition-colors" data-user-id="{{ $user->user_id }}">
                                     <td class="px-4 py-3 text-white text-sm">{{ $user->user_id }}</td>
                                     <td class="px-4 py-3 text-white text-sm">
                                         {{ $user->username }}
@@ -58,6 +71,9 @@
                                         @endif
                                     </td>
                                     <td class="px-4 py-3 text-sm"><span class="px-2 py-1 rounded bg-[#4a6a56] text-white/80 text-xs font-medium uppercase">{{ strtolower($user->role) }}</span></td>
+                                    <td class="px-4 py-3 text-sm">
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-white text-xs font-medium" style="background-color: {{ $user->user_type_color ?? '#6366f1' }}">{{ $user->user_type ?? 'warga' }}</span>
+                                    </td>
                                     @if($isSuperAdmin && !$isOwn)
                                         <td class="px-4 py-3 text-center">
                                             <div class="flex items-center justify-center gap-1">
@@ -98,17 +114,13 @@
 @push('scripts')
 <script>
     function confirmDeleteUser(userId, username) {
-        document.getElementById('deleteUserId').value = userId;
         document.getElementById('deleteUserName').textContent = username;
-        const form = document.getElementById('deleteUserForm');
-        form.action = '{{ route('admin-users.destroy', 0) }}'.replace('0', userId);
+        document.getElementById('deleteUserForm').action = '{{ route('admin-users.destroy', ':id') }}'.replace(':id', userId);
         document.getElementById('deleteUserModal').classList.remove('hidden');
     }
-
     function closeDeleteUserModal() {
         document.getElementById('deleteUserModal').classList.add('hidden');
     }
 </script>
 @endpush
-
 @endsection

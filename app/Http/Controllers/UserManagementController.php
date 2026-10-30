@@ -76,6 +76,8 @@ class UserManagementController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:6',
             'role' => 'required|in:super_admin,admin',
+            'user_type' => 'sometimes|string',
+            'user_type_color' => 'sometimes|string',
         ]);
 
         $user = User::create([
@@ -83,6 +85,8 @@ class UserManagementController extends Controller
             'email' => $validated['email'],
             'password_hash' => Hash::make($validated['password']),
             'role' => $validated['role'],
+            'user_type' => $validated['user_type'] ?? 'warga',
+            'user_type_color' => $validated['user_type_color'] ?? '#6366f1',
             'email_verified_at' => now(),
         ]);
 
@@ -154,11 +158,15 @@ class UserManagementController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->user_id,
             'password' => 'nullable|string|min:6',
             'role' => 'required|in:super_admin,admin',
+            'user_type' => 'sometimes|string',
+            'user_type_color' => 'sometimes|string',
         ]);
 
         $user->username = $validated['username'];
         $user->email = $validated['email'];
         $user->role = $validated['role'];
+        $user->user_type = $validated['user_type'] ?? $user->user_type;
+        $user->user_type_color = $validated['user_type_color'] ?? $user->user_type_color;
 
         if (!empty($validated['password'])) {
             $user->password_hash = Hash::make($validated['password']);
@@ -191,4 +199,5 @@ class UserManagementController extends Controller
         return redirect()->route('admin-users.index')
             ->with('success', 'Pengguna berhasil dihapus.');
     }
+
 }
