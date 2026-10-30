@@ -1,4 +1,9 @@
-<aside class="w-64 bg-[#2d4a3a] border-r border-[#4a6a56] flex flex-col min-h-[calc(100vh-4rem)] z-10 sidebar-scroll">
+<aside id="sidebar" class="w-64 bg-[#2d4a3a] border-r border-[#4a6a56] flex flex-col min-h-[calc(100vh-4rem)] z-30 sidebar-scroll fixed inset-y-0 left-0 transform -translate-x-full transition-transform duration-300 ease-in-out md:static md:translate-x-0">
+    <!-- Mobile close button -->
+    <button onclick="closeMobileSidebar()" class="md:hidden absolute top-4 right-4 w-8 h-8 rounded-lg bg-[#3d5c4c] flex items-center justify-center text-white text-xs hover:bg-[#3d5c4c]/80 transition-colors z-40">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+
     <!-- Sidebar header / brand area (optional, navbar already has brand) -->
     <div class="p-6"></div>
 

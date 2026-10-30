@@ -18,13 +18,13 @@
             <p class="text-white/60 text-sm">Detail akun pengguna</p>
         </div>
 
-        <div class="flex gap-3">
-            <a href="{{ route('admin-users.index') }}" class="px-6 py-3 rounded-xl bg-[#4a6a56] text-white text-sm font-medium hover:bg-[#4a6a56]/80 transition-colors">Kembali</a>
+        <div class="flex flex-col sm:flex-row gap-3">
+            <a href="{{ route('admin-users.index') }}" class="px-6 py-3 rounded-xl bg-[#4a6a56] text-white text-sm font-medium hover:bg-[#4a6a56]/80 transition-colors w-full sm:w-auto text-center sm:text-left">Kembali</a>
 
-            <form action="{{ route('admin-users.destroy', $user->user_id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">
+            <form action="{{ route('admin-users.destroy', $user->user_id) }}" method="POST" class="inline w-full sm:w-auto" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="px-6 py-3 rounded-xl bg-[#a63d3d] text-white text-sm font-medium hover:bg-[#8f3333] transition-colors">Hapus user</button>
+                <button type="submit" class="w-full px-6 py-3 rounded-xl bg-[#a63d3d] text-white text-sm font-medium hover:bg-[#8f3333] transition-colors">Hapus user</button>
             </form>
         </div>
     </div>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs text-white/60 uppercase tracking-wider mb-1">Role</label>
                         <div class="bg-white/5 rounded-xl p-3 border border-white/10">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs text-white/60 uppercase tracking-wider mb-1">ID Pengguna</label>
                         <div class="bg-white/5 rounded-xl p-3 border border-white/10">

@@ -92,9 +92,9 @@
                 <!-- Comment Form -->
                 <form action="{{ route('reports.comments.store', $report->report_id) }}" method="POST" class="mb-6">
                     @csrf
-                    <div class="flex gap-3">
-                        <textarea name="body" rows="2" placeholder="Tulis komentar..." class="flex-1 px-4 py-3 rounded-xl bg-[#1a3326] border border-[#3d5c4c] text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all"></textarea>
-                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-medium transition-colors">Kirim</button>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <textarea name="body" rows="2" placeholder="Tulis komentar..." class="w-full sm:w-auto flex-1 px-4 py-3 rounded-xl bg-[#1a3326] border border-[#3d5c4c] text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all"></textarea>
+                        <button type="submit" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-medium transition-colors">Kirim</button>
                     </div>
                 </form>
 

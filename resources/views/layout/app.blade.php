@@ -36,9 +36,12 @@
 
             <!-- Main wrapper: navbar stacks on top, then sidebar+content row -->
             <div class="flex flex-col min-h-screen">
-                <div class="flex flex-1 overflow-hidden">
-                    <!-- Sidebar -->
+                <div class="flex flex-1 overflow-hidden relative">
+                    <!-- Sidebar: off-canvas drawer on mobile, inline on md+ -->
                     @include('layout.sidebar')
+
+                    <!-- Mobile backdrop -->
+                    <div id="mobileSidebarBackdrop" class="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm hidden" onclick="closeMobileSidebar()"></div>
 
                     <!-- Main Content -->
                     <main class="flex-1 overflow-y-auto bg-[#1a3326] relative z-0 pt-6">
@@ -52,6 +55,27 @@
                 @yield('content')
             </div>
         @endif
+<script>
+    function toggleMobileSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('mobileSidebarBackdrop');
+        const isOpen = !sidebar.classList.contains('-translate-x-full');
+        if (isOpen) {
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+            backdrop.classList.add('hidden');
+        } else {
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('translate-x-0');
+            backdrop.classList.remove('hidden');
+        }
+    }
+    function closeMobileSidebar() {
+        document.getElementById('sidebar').classList.add('-translate-x-full');
+        document.getElementById('sidebar').classList.remove('translate-x-0');
+        document.getElementById('mobileSidebarBackdrop').classList.add('hidden');
+    }
+</script>
 @stack('scripts')
     </body>
 </html>
