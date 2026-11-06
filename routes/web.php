@@ -245,14 +245,17 @@ Route::get('/activities', function () {
 // Logout (both web and api guards)
 // ---------------------------------------------------------------------------
 Route::post('/logout', function () {
+    // Logout dari guard web bawaan (jika ada)
     if (auth()->guard('web')->check()) {
         auth()->guard('web')->logout();
     }
-    if (auth()->guard('api')->check()) {
-        auth()->guard('api')->logout();
-    }
+
+    // Hapus semua session kustom yang Anda buat
+    session()->forget(['auth_user_id', 'auth_user_role', 'auth_user_name']);
+    
     session()->invalidate();
     session()->regenerateToken();
+
     return redirect()->route('admin.login');
 })->name('logout');
 

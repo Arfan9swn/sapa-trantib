@@ -1,91 +1,139 @@
-<aside id="sidebar" class="w-64 bg-[#2d4a3a] border-r border-[#4a6a56] flex flex-col min-h-[calc(100vh-4rem)] z-30 sidebar-scroll fixed inset-y-0 left-0 transform -translate-x-full transition-transform duration-300 ease-in-out md:static md:translate-x-0">
-    <!-- Mobile close button -->
-    <button onclick="closeMobileSidebar()" class="md:hidden absolute top-4 right-4 w-8 h-8 rounded-lg bg-[#3d5c4c] flex items-center justify-center text-white text-xs hover:bg-[#3d5c4c]/80 transition-colors z-40">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-    </button>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sapa-Trantib</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-[#152a20] text-gray-100 antialiased">
 
-    <!-- Sidebar header / brand area (optional, navbar already has brand) -->
-    <div class="p-6"></div>
+    <!-- WADAH UTAMA -->
+    <div class="flex h-screen overflow-hidden relative">
 
-    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-        @auth
+        <!-- BACKDROP / OVERLAY GELAP UNTUK MOBILE -->
+        <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/50 z-20 hidden transition-opacity duration-300"></div>
+
+        <!-- SIDEBAR -->
+        <!-- Ubah sedikit transisi agar class mobile-open bisa mengontrol pergeseran dengan mulus -->
+        <aside id="sidebar" class="w-64 bg-[#2d4a3a] border-r border-[#4a6a56] flex flex-col flex-shrink-0 z-30 fixed inset-y-0 left-0 -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out md:static h-full shadow-2xl">
+            
+            <!-- Tombol Close (X) di Mobile -->
+            <button onclick="toggleMobileSidebar()" class="md:hidden absolute top-4 right-4 w-8 h-8 rounded-lg bg-[#3d5c4c] flex items-center justify-center text-white text-xs hover:bg-[#3d5c4c]/80 transition-colors z-40">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="p-6"></div>
+
+            <!-- Bagian Menu Navigasi Sidebar -->
+            <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+                @php
+                    $sidebarAuthUser = null;
+                    if (session('auth_user_id')) {
+                        $sidebarAuthUser = \App\Models\User::find(session('auth_user_id'));
+                    }
+                    $userRole = $sidebarAuthUser->role ?? session('auth_user_role') ?? '';
+                    $isAdmin = in_array(strtolower($userRole), ['admin', 'super_admin']);
+                @endphp
+
+                @if ($isAdmin)
+                    <!-- Menu Admin -->
+                    <a href="{{ route('admin-users.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors bg-[#3d5c4c] text-white border-l-4 border-[#8fd89b]">List user</a>
+                    <a href="{{ route('reports.admin') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">List laporan</a>
+                    <a href="{{ route('admin-user-tags.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">User Tags</a>
+                    <a href="{{ route('admin-categories.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">Buat kategori</a>
+                    <a href="{{ route('statistics') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">Statistik</a>
+                    <a href="{{ route('activities.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">Activities</a>
+                @else
+                    <!-- Menu Warga / Pelapor -->
+                    <a href="{{ route('reports.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors bg-[#3d5c4c] text-white border-l-4 border-[#8fd89b]">Laporan anda</a>
+                    <a href="{{ route('reports.create') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">Kirim laporan</a>
+                @endif
+            </nav>
+
+            <!-- Tombol Logout di Bawah Sidebar -->
+            <div class="p-6">
+                <form action="{{ route('logout') }}" method="POST" class="w-full">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg bg-[#a63d3d] hover:bg-[#8f3333] transition-colors text-white border border-[#c96b6b]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Keluar dari akun
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- KONTEN UTAMA SEBELAH KANAN -->
+        <div class="flex-1 flex flex-col overflow-hidden w-full">
+
+            <!-- NAVBAR ATAS -->
             @php
-                $userRole = auth()->user()->role ?? 'warga';
-                $isAdmin = in_array($userRole, ['admin', 'super_admin']);
+                $authUser = null;
+                if (session('auth_user_id')) {
+                    $authUser = \App\Models\User::find(session('auth_user_id'));
+                }
+                $userRoleNav = $authUser->role ?? session('auth_user_role') ?? '';
+                $isAdminNav = in_array(strtolower($userRoleNav), ['admin', 'super_admin']);
+
+                $displayName = '';
+                if ($isAdminNav) {
+                    $displayName = $authUser?->username ?? session('auth_user_name') ?? '';
+                }
+
+                $initials = '';
+                if ($displayName !== '') {
+                    $parts = preg_split('/\s+/', trim($displayName));
+                    if (count($parts) === 1) {
+                        $initials = strtoupper(substr($parts[0], 0, 2));
+                    } else {
+                        $initials = strtoupper(substr($parts[0], 0, 1) . substr($parts[count($parts) - 1], 0, 1));
+                    }
+                }
             @endphp
 
-            @if ($isAdmin)
-                <!-- Admin Sidebar Links (Image 2) -->
-                <a href="{{ route('admin-users.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors bg-[#3d5c4c] text-white border-l-4 border-[#8fd89b]">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                    List user
-                </a>
+            <nav class="bg-[#1a3326] border-b border-[#2d4a3a] px-6 py-4 flex items-center justify-between z-10 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl font-serif italic text-white tracking-tight">Sapa-Trantib</span>
+                </div>
 
-                <a href="{{ route('reports.admin') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    List laporan
-                </a>
+                <div class="flex items-center gap-4">
+                    <!-- Tombol Burger Mobile -->
+                    <button onclick="toggleMobileSidebar()" class="md:hidden w-10 h-10 rounded-lg bg-[#2d4a3a] flex items-center justify-center text-white border border-[#4a6a56] hover:bg-[#3d5c4c] transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
 
-                <a href="{{ route('admin-user-tags.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
-                    </svg>
-                    User Tags
-                </a>
+                    @if ($isAdminNav)
+                        <div class="text-right hidden md:block">
+                            <p class="text-sm text-[#8fd89b] font-medium">Selamat datang kembali{{ $displayName !== '' ? ' ' . $displayName : '' }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#2d4a3a] flex items-center justify-center text-white text-sm font-medium border border-[#4a6a56]">
+                            {{ $initials }}
+                        </div>
+                    @endif
+                </div>
+            </nav>
 
-                <a href="{{ route('admin-categories.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    Buat kategori
-                </a>
+            <!-- AREA KONTEN UTAMA -->
+            <main class="flex-1 overflow-y-auto p-6 bg-[#152a20]">
+                @yield('content')
+            </main>
 
-                <a href="{{ route('statistics') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    Statistik
-                </a>
-
-                <a href="{{ route('activities.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                    Activities
-                </a>
-            @else
-                <!-- Guest (Warga) Sidebar Links (Image 1) -->
-                <a href="{{ route('reports.index') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors bg-[#3d5c4c] text-white border-l-4 border-[#8fd89b]">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Laporan anda
-                </a>
-
-                <a href="{{ route('reports.create') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg transition-colors hover:bg-[#3d5c4c]/50 text-[#c9e3cb]">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5l12 12M5 17l12-12M17 17l-12 12M7 7l12 12"></path>
-                    </svg>
-                    Kirim laporan
-                </a>
-            @endif
-        @endauth
-    </nav>
-
-    <!-- Logout button at bottom -->
-    <div class="p-6">
-        <form action="{{ route('logout') }}" method="POST" class="w-full">
-            @csrf
-            <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg bg-[#a63d3d] hover:bg-[#8f3333] transition-colors text-white border border-[#c96b6b]">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                Keluar dari akun
-            </button>
-        </form>
+        </div>
     </div>
-</aside>
+
+    <!-- SCRIPT JAVASCRIPT YANG DIPERBAIKI -->
+    <script>
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+
+            // Menggunakan classList.toggle untuk menggeser posisi translate X secara mulus
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('translate-x-0');
+            
+            // Memunculkan/menyembunyikan backdrop gelap
+            backdrop.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
