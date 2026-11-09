@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryManagementController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\UserTagController;
 use App\Http\Controllers\OtpController;
+use App\Http\Controllers\ReportsController;
 use App\Models\User;
 use App\Models\Reps;
 use App\Models\RepsComment;
@@ -162,17 +163,17 @@ Route::get('/reports/create', function () {
     return view('reports.report-create');
 })->name('reports.create');
 
-Route::get('/reports/{report}', function ($report) {
-    $report = Reps::with('category', 'subCategory', 'comments.user', 'media')
-        ->findOrFail($report);
-    return view('reports.report-show', compact('report'));
-})->name('reports.show');
-
 Route::get('/reports/admin', function () {
     $reports = Reps::with('category', 'subCategory', 'comments', 'media')
         ->latest()->get();
     return view('reports.admin-report', compact('reports'));
 })->name('reports.admin');
+
+Route::get('/reports/{report}', function ($report) {
+    $report = Reps::with('category', 'subCategory', 'comments.user', 'media')
+        ->findOrFail($report);
+    return view('reports.report-show', compact('report'));
+})->name('reports.show');
 
 Route::post('/reports/{report}/comments', function ($report) {
     $report = Reps::findOrFail($report);
