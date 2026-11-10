@@ -3,7 +3,17 @@
     if (session('auth_user_id')) {
         $authUser = \App\Models\User::find(session('auth_user_id'));
     }
-    $displayName = $authUser?->username ?? session('auth_user_name') ?? '';
+
+    // Cek apakah user yang login memiliki role admin atau super_admin
+    $userRole = $authUser->role ?? session('auth_user_role') ?? '';
+    $isAdmin = in_array(strtolower($userRole), ['admin', 'super_admin']);
+
+    // Tampilkan display name HANYA jika dia admin/super_admin
+    $displayName = '';
+    if ($isAdmin) {
+        $displayName = $authUser?->username ?? session('auth_user_name') ?? '';
+    }
+
     $initials = '';
     if ($displayName !== '') {
         $parts = preg_split('/\s+/', trim($displayName));
@@ -21,12 +31,19 @@
     </div>
 
     <div class="flex items-center gap-4">
-        <div class="text-right hidden md:block">
-            <p class="text-sm text-[#8fd89b] font-medium">Selamat datang kembali{{ $displayName !== '' ? ' ' . $displayName : '' }}</p>
-            <p class="text-xs text-[#a6d189] opacity-80"></p>
-        </div>
-        <div class="w-10 h-10 rounded-full bg-[#2d4a3a] flex items-center justify-center text-white text-sm font-medium border border-[#4a6a56]">
-            {{ $initials }}
-        </div>
+        <button onclick="toggleMobileSidebar()" class="md:hidden w-10 h-10 rounded-lg bg-[#2d4a3a] flex items-center justify-center text-white border border-[#4a6a56]">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+
+        {{-- Tampilkan bagian profil dan sapaan HANYA jika statusnya Admin/Super Admin --}}
+        @if ($isAdmin)
+            <div class="text-right hidden md:block">
+                <p class="text-sm text-[#8fd89b] font-medium">Selamat datang kembali{{ $displayName !== '' ? ' ' . $displayName : '' }}</p>
+                <p class="text-xs text-[#a6d189] opacity-80"></p>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-[#2d4a3a] flex items-center justify-center text-white text-sm font-medium border border-[#4a6a56]">
+                {{ $initials }}
+            </div>
+        @endif
     </div>
 </nav>

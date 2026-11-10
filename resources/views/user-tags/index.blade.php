@@ -80,9 +80,9 @@
                 </div>
             </div>
 
-            <div class="flex gap-3 pt-6 border-t border-white/10">
-                <a href="{{ route('admin-users.index') }}" class="flex-1 py-2 rounded-xl bg-[#4a6a56] text-white text-sm font-medium hover:bg-[#3d5c4c] transition-colors text-center">Kembali</a>
-                <button type="submit" class="flex-1 py-2 rounded-xl bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors">Terapkan Tag</button>
+            <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-white/10">
+                <a href="{{ route('admin-users.index') }}" class="w-full sm:w-auto py-2 rounded-xl bg-[#4a6a56] text-white text-sm font-medium hover:bg-[#3d5c4c] transition-colors text-center">Kembali</a>
+                <button type="submit" class="w-full sm:w-auto py-2 rounded-xl bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors">Terapkan Tag</button>
             </div>
         </form>
         @endif

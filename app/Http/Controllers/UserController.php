@@ -20,14 +20,16 @@ class UserController extends Controller
             'username' => 'required|string|max:50|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password_hash' => 'required|string',
-            'role' => 'sometimes|in:super_admin,admin',
+            // Perbolehkan kosong/null, atau batasi hanya untuk mengubah role ke admin/super_admin oleh sistem tertentu
+            'role' => 'nullable|in:super_admin,admin', 
         ]);
 
         $user = User::create([
             'username' => $validated['username'],
-            'email' => $validated['email'],
+            'email' => $email = $validated['email'],
             'password_hash' => Hash::make($validated['password_hash']),
-            'role' => $validated['role'] ?? 'admin',
+            // Ubah default-nya menjadi null atau kosong agar menjadi pengguna biasa (non-admin)
+            'role' => $validated['role'] ?? null, 
         ]);
 
         return response()->json($user, 201);
@@ -44,7 +46,7 @@ class UserController extends Controller
             'username' => 'sometimes|string|max:50|unique:users,username,' . $user->user_id,
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->user_id,
             'password_hash' => 'sometimes|string',
-            'role' => 'sometimes|in:super_admin,admin',
+            'role' => 'nullable|in:super_admin,admin',
         ]);
 
         if (isset($validated['password_hash'])) {

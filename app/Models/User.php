@@ -47,6 +47,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Helper untuk mengecek apakah user adalah Admin atau Super Admin.
+     */
+    public function isAdmin(): bool
+    {
+        return in_array(strtolower($this->role), ['admin', 'super_admin']);
+    }
+
+    /**
      * Get the reports assigned to this user.
      */
     public function assignedReports(): HasMany
