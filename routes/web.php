@@ -159,9 +159,7 @@ Route::get('/reports', function () {
     return view('reports.report-index', compact('reports'));
 })->name('reports.index');
 
-Route::get('/reports/create', function () {
-    return view('reports.report-create');
-})->name('reports.create');
+Route::get('/reports/create', [App\Http\Controllers\ReportsController::class, 'create'])->name('reports.create');
 
 Route::get('/reports/admin', function () {
     $reports = Reps::with('category', 'subCategory', 'comments', 'media')
@@ -241,6 +239,9 @@ Route::post('/admin/user-tags/apply', [UserTagController::class, 'apply'])->name
 Route::get('/activities', function () {
     return view('activities.log');
 })->name('activities.index');
+
+Route::get('/warga/reports/create', [App\Http\Controllers\ReportsController::class, 'wargaCreate'])->name('warga.reports.create');
+Route::post('/warga/reports', [App\Http\Controllers\ReportsController::class, 'wargaStore'])->name('warga.reports.store');
 
 // ---------------------------------------------------------------------------
 // Logout (both web and api guards)
