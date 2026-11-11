@@ -1,6 +1,6 @@
 @extends('layout.app')
 
-@section('title', 'Laporan Anda - SapaTrantib')
+@section('title', 'Semua laporan - SapaTrantib')
 
 @section('content')
 <div class="min-h-screen w-full relative overflow-hidden flex">
@@ -11,7 +11,7 @@
             <!-- Header -->
             <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-4xl font-bold text-white mb-1">Laporan Anda</h1>
+                    <h1 class="text-4xl font-bold text-white mb-1">Semua laporan</h1>
                     <p class="text-white/80 text-sm">Kelola laporan yang sudah dikirim</p>
                 </div>
                 <span class="bg-[#3d5c4c] text-white px-3 py-1 rounded-full text-xs font-medium mt-4 md:mt-0">

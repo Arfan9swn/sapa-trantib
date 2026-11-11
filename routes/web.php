@@ -15,6 +15,7 @@ use App\Models\RepsComment;
 use App\Models\OtpVerification;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
+use App\Http\Controllers\RTController;
 
 Route::get('/', function () {
     return view('auth.landing-page');
@@ -244,7 +245,17 @@ Route::get('/warga/reports/create', [App\Http\Controllers\ReportsController::cla
 Route::post('/warga/reports', [App\Http\Controllers\ReportsController::class, 'wargaStore'])->name('warga.reports.store');
 
 // ---------------------------------------------------------------------------
-// Logout (both web and api guards)
+Route::prefix('rts')->name('rts.')->group(function () {
+    Route::get('/', [App\Http\Controllers\RTController::class, 'index'])->name('index');
+    Route::get('/create', [App\Http\Controllers\RTController::class, 'create'])->name('create');
+    Route::post('/', [App\Http\Controllers\RTController::class, 'store'])->name('store');
+    Route::get('/{rt}/edit', [App\Http\Controllers\RTController::class, 'edit'])->name('edit');
+    Route::put('/{rt}', [App\Http\Controllers\RTController::class, 'update'])->name('update');
+    Route::delete('/{rt}', [App\Http\Controllers\RTController::class, 'destroy'])->name('destroy');
+    
+    // Check RT number existence
+    Route::get('/check-rt-number', [App\Http\Controllers\RTController::class, 'checkRtNumber'])->name('check-rt-number');
+});
 // ---------------------------------------------------------------------------
 Route::post('/logout', function () {
     // Logout dari guard web bawaan (jika ada)

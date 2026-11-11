@@ -27,9 +27,12 @@
                         <label for="reporter_rt" class="block text-white font-medium text-sm mb-2">RT</label>
                         <select name="reporter_rt" id="reporter_rt" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" required>
                             <option value="">Pilih RT...</option>
-                            @for ($i = 1; $i <= 10; $i++)
-                                <option value="{{ $i }}">{{ $i }}</option>
-                            @endfor
+                            @php
+                                $rts = App\Models\RT::orderBy('rt_number')->get();
+                            @endphp
+                            @foreach ($rts as $rt)
+                                <option value="{{ $rt->rt_number }}">{{ $rt->rt_number }} - Kepala: {{ $rt->head_name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div>
