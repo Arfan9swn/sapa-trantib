@@ -108,9 +108,28 @@
                     <!-- NAVBAR -->
                     <nav class="bg-[#1a3326] border-b border-[#2d4a3a] px-6 py-4 flex items-center justify-between z-10 flex-shrink-0">
                         <span class="text-2xl font-serif italic text-white tracking-tight">Sapa-Trantib</span>
-                        <button onclick="toggleMobileSidebar()" class="md:hidden w-10 h-10 rounded-lg bg-[#2d4a3a] flex items-center justify-center text-white border border-[#4a6a56]">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                        </button>
+                        <div class="flex items-center gap-4">
+                            <button onclick="toggleMobileSidebar()" class="md:hidden w-10 h-10 rounded-lg bg-[#2d4a3a] flex items-center justify-center text-white border border-[#4a6a56]">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                            </button>
+                            @php
+                                $navAuthUser = null;
+                                if (session('auth_user_id')) {
+                                    $navAuthUser = \App\Models\User::find(session('auth_user_id'));
+                                }
+                                $navUserRole = $navAuthUser->role ?? session('auth_user_role') ?? '';
+                                $navIsAdmin = in_array(strtolower($navUserRole), ['admin', 'super_admin']);
+                                $navDisplayName = '';
+                                if ($navIsAdmin) {
+                                    $navDisplayName = $navAuthUser?->username ?? session('auth_user_name') ?? '';
+                                }
+                            @endphp
+                            @if ($navIsAdmin && $navDisplayName !== '')
+                                <div class="text-right hidden md:block">
+                                    <p class="text-sm text-[#8fd89b] font-medium">Selamat datang kembali, {{ $navDisplayName }} !</p>
+                                </div>
+                            @endif
+                        </div>
                     </nav>
                 @endif
 

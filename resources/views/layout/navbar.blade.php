@@ -38,7 +38,7 @@
         {{-- Tampilkan bagian profil dan sapaan HANYA jika statusnya Admin/Super Admin --}}
         @if ($isAdmin)
             <div class="text-right hidden md:block">
-                <p class="text-sm text-[#8fd89b] font-medium">Selamat datang kembali{{ $displayName !== '' ? ' ' . $displayName : '' }}</p>
+                <p class="text-sm text-[#8fd89b] font-medium">Selamat datang kembali, {{ $displayName }} !</p>
                 <p class="text-xs text-[#a6d189] opacity-80"></p>
             </div>
             <div class="w-10 h-10 rounded-full bg-[#2d4a3a] flex items-center justify-center text-white text-sm font-medium border border-[#4a6a56]">
