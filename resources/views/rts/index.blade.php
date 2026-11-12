@@ -16,9 +16,6 @@
                             <th class="py-4">#</th>
                             <th class="py-4">No. RT</th>
                             <th class="py-4">Kepala RT</th>
-                            <th class="py-4">Jumlah Penduduk</th>
-                            <th class="py-4">Laporan Diterbitkan</th>
-                            <th class="py-4">Tipe Laporan</th>
                             <th class="py-4">Aksi</th>
                         </tr>
                     </thead>
@@ -28,13 +25,6 @@
                             <td class="py-6 font-medium">{{ $index + 1 }}</td>
                             <td class="py-6">{{ $rt->rt_number }}</td>
                             <td class="py-6">{{ $rt->head_name }}</td>
-                            <td class="py-6">{{ $rt->population }}</td>
-                            <td class="py-6">{{ $rt->reports_reported }}</td>
-                            <td class="py-6">
-                                <span class="px-2 py-1 text-xs rounded-full bg-emerald-500/20 text-emerald-400">
-                                    {{ $rt->report_type == 'category' ? 'Kategori' : 'Subkategori' }}
-                                </span>
-                            </td>
                             <td class="py-6">
                                 <form action="{{ route('rts.destroy', $rt->rt_id) }}" method="POST" style="display:inline">
                                     @csrf(@method('DELETE'))
