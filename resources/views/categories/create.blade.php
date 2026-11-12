@@ -6,7 +6,7 @@
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- Header -->
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+    <div class="flex flex-col lg:flex-row lg:justify-between gap-4 mb-8">
         <div>
             <h1 class="text-3xl font-bold text-white mb-1">Buat Kategori Baru</h1>
             <p class="text-white/60 text-sm">Isi nama kategori dan tambahkan sub kategori terkait</p>

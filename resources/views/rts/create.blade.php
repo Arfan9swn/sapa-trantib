@@ -21,8 +21,10 @@
                     <label for="rt_number" class="block text-white font-medium text-sm mb-2">No. RT</label>
                     <input type="text" name="rt_number" id="rt_number" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Contoh: 001" required>
                 </div>
-                
-                <button type="submit" class="w-full bg-emerald-600 text-white px-6 py-4 rounded-lg font-semibold hover:bg-emerald-700 transition-all">Buat RT</button>
+                <div class="flex gap-3 pt-4 justify-center">
+                    <a href="{{ route('rts.index') }}" class="w-auto text-white bg-[#1a3326] px-6 py-4 rounded-lg font-semibold hover:bg-emerald-700 transition-all">Batal</a>
+                    <button type="submit" class="w-auto bg-emerald-600 text-white px-6 py-4 rounded-lg font-semibold hover:bg-emerald-700 transition-all">Buat RT</button>
+                </div>
             </form>
         </div>
     </div>
