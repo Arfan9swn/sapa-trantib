@@ -142,6 +142,8 @@
         </div>
     @endif
 
+    @stack('scripts')
+
     <script>
         function toggleMobileSidebar() {
             const sidebar = document.getElementById('sidebar');
