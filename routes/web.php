@@ -243,6 +243,7 @@ Route::get('/activities', function () {
 
 Route::get('/warga/reports/create', [App\Http\Controllers\ReportsController::class, 'wargaCreate'])->name('warga.reports.create');
 Route::post('/warga/reports', [App\Http\Controllers\ReportsController::class, 'wargaStore'])->name('warga.reports.store');
+Route::get('/api/subcategories', [App\Http\Controllers\ReportsController::class, 'getSubCategories'])->name('api.subcategories');
 
 // ---------------------------------------------------------------------------
 Route::prefix('rts')->name('rts.')->group(function () {
