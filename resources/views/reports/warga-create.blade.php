@@ -12,6 +12,31 @@
             <form action="{{ route('warga.reports.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
+                @if ($errors->any())
+                <div class="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm mb-4">
+                    <strong>Terjadi kesalahan:</strong>
+                    <ul class="list-disc list-inside mt-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                <!-- Hidden GPS fields (populated by browser Geolocation API) -->
+                <input type="hidden" name="latitude" id="latitude" value="">
+                <input type="hidden" name="longitude" id="longitude" value="">
+
+                <!-- Hidden system fields (auto-filled from session) -->
+                <input type="hidden" name="status" value="pending">
+                <input type="hidden" name="reporter_name" value="{{ session('auth_user_name', 'Warga') }}">
+
+                <!-- Location status indicator -->
+                <div id="location-status" class="mb-4 p-3 rounded-lg bg-[#1a3326]/50 border border-[#4a6a56]/30 text-xs text-emerald-200/70 hidden flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="location-text">Mendeteksi lokasi GPS...</span>
+                </div>
+
                 <div class="mb-4">
                     <label for="title" class="block text-white font-medium text-sm mb-2">Judul laporan</label>
                     <input type="text" name="title" id="title" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan judul laporan..." required>
@@ -87,7 +112,70 @@
         const imageInput = document.getElementById('image');
         const imageDropZone = document.getElementById('imageDropZone');
 
-        // Subcategory AJAX loading
+        // --- GPS Location Capture ---
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+        const locationStatus = document.getElementById('location-status');
+        const locationText = document.getElementById('location-text');
+
+        function updateLocationStatus(msg, success) {
+            locationStatus.classList.remove('hidden');
+            locationText.textContent = msg;
+            if (success) {
+                locationStatus.classList.remove('bg-red-500/20', 'text-red-400');
+                locationStatus.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-200');
+            } else {
+                locationStatus.classList.remove('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-200');
+                locationStatus.classList.add('bg-red-500/20', 'border-red-500/30', 'text-red-400');
+            }
+        }
+
+        function captureLocation() {
+            if (!navigator.geolocation) {
+                updateLocationStatus('Geolocation tidak didukung oleh browser ini.', false);
+                return;
+            }
+
+            updateLocationStatus('Mendeteksi lokasi GPS...', true);
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+                    latInput.value = lat;
+                    lngInput.value = lng;
+                    updateLocationStatus('Lokasi terdeteksi: ' + lat + ', ' + lng, true);
+                },
+                function(error) {
+                    let msg = 'Gagal mendeteksi lokasi GPS.';
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            msg = 'Izin lokasi ditolak. Silakan izinkan akses lokasi.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            msg = 'Lokasi tidak tersedia.';
+                            break;
+                        case error.TIMEOUT:
+                            msg = 'Permintaan lokasi kadaluarsa.';
+                            break;
+                    }
+                    updateLocationStatus(msg, false);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        // Attempt to capture location on page load
+        captureLocation();
+
+        // Expose globally so a "Coba Lagi" button can call it if needed
+        window.captureLocation = captureLocation;
+
+        // --- Existing subcategory AJAX ---
         categorySelect.addEventListener('change', function() {
             const categoryId = this.value;
 

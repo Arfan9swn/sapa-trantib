@@ -75,36 +75,65 @@ class ReportsController extends Controller
     /** Store a new report as warga/guest. */
     public function wargaStore(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category_id' => 'nullable|exists:categories,category_id',
-            'sub_category_id' => 'nullable|exists:sub_categories,sub_category_id',
-            'status' => 'required|string|max:50',
-            'reporter_name' => 'required|string|max:100',
-            'reporter_phone_number' => 'nullable|string|max:20',
-            'reporter_location' => 'nullable|string|max:255',
-            'reporter_rt' => 'nullable|string|max:10',
-            'latitude' => 'nullable|string',
-            'longitude' => 'nullable|string',
-            'boosts' => 'nullable|integer',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        // Auto-fill system fields before validation (guaranteed to be present)
+        $request->merge([
+            'status'          => $request->input('status', 'pending'),
+            'reporter_name'   => $request->input('reporter_name', session('auth_user_name', 'Warga')),
         ]);
 
-        $report = Reps::create($validated);
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'title'                  => 'required|string|max:255',
+            'description'            => 'nullable|string',
+            'category_id'            => 'nullable|exists:categories,category_id',
+            'sub_category_id'        => 'nullable|exists:sub_categories,sub_category_id',
+            'status'                 => 'required|string|max:50',
+            'reporter_name'          => 'required|string|max:100',
+            'reporter_phone_number'  => 'nullable|string|max:20',
+            'reporter_location'      => 'nullable|string|max:255',
+            'reporter_rt'            => 'nullable|string|max:10',
+            'latitude'               => 'nullable|string',
+            'longitude'              => 'nullable|string',
+            'boosts'                 => 'nullable|integer',
+            'image'                  => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
 
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('reports', 'public');
-            RepsMedia::create([
-                'report_id' => $report->report_id,
-                'media_url' => $path,
-                'media_type' => $request->file('image')->getMimeType(),
-                'uploaded_at' => now(),
-            ]);
+        if ($validator->fails()) {
+            return redirect()->route('warga.reports.create')
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        return redirect()->route('reports.index')
-            ->with('success', 'Laporan berhasil dibuat sebagai warga/guest.');
+        $validated = $validator->validated();
+
+        // Ensure required database fields are present
+        $now = now();
+        $validated['submitted_at']   = $now;
+        $validated['created_at']     = $now;
+        $validated['updated_at']     = $now;
+        $validated['reference_code'] = 'WRG-' . strtoupper(substr(uniqid(), -8));
+
+        try {
+            $report = Reps::create($validated);
+
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('reports', 'public');
+                RepsMedia::create([
+                    'report_id'   => $report->report_id,
+                    'media_url'   => $path,
+                    'media_type'  => $request->file('image')->getMimeType(),
+                    'uploaded_at' => now(),
+                ]);
+            }
+
+            return redirect()->route('reports.index')
+                ->with('success', 'Laporan berhasil dibuat sebagai warga/guest.');
+        } catch (\Exception $e) {
+            \Log::error('wargaStore error: ' . $e->getMessage(), ['exception' => $e]);
+
+            return redirect()->route('warga.reports.create')
+                ->withErrors(['report' => 'Gagal menyimpan laporan: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /** Show warga/guest report creation form. */

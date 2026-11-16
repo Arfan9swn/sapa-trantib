@@ -16,7 +16,7 @@ class Reps extends Model
 
     protected $table = 'reports';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     #[Fillable([
         'reference_code', 'title', 'description', 'category_id', 'sub_category_id',
