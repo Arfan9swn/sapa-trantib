@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminRegisterController;
+use App\Http\Controllers\Auth\WargaLoginController;
+use App\Http\Controllers\Auth\WargaRegisterController;
 use App\Http\Controllers\CategoryManagementController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\UserTagController;
@@ -50,6 +52,24 @@ Route::post('/admin/register', [AdminRegisterController::class, 'store'])
 Route::get('/admin/register-success', function () {
     return view('auth.register-success');
 })->name('admin.register.success');
+
+// ---------------------------------------------------------------------------
+// Warga / Guest registration & login (name + phone only)
+// ---------------------------------------------------------------------------
+
+Route::get('/warga/register', function () {
+    return view('auth.warga-register');
+})->name('warga.register');
+
+Route::post('/warga/register', [WargaRegisterController::class, 'store'])
+    ->name('warga.register.post');
+
+Route::get('/warga/login', function () {
+    return view('auth.warga-login');
+})->name('warga.login');
+
+Route::post('/warga/login', [WargaLoginController::class, 'store'])
+    ->name('warga.login.post');
 
 // ---------------------------------------------------------------------------
 // OTP (admin email verification — session based)

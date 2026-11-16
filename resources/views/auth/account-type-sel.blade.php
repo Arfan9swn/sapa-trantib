@@ -26,9 +26,15 @@
                     Sebagai Admin
                 </a>
 
-                <a href="{{ route('reports.create') }}" class="block w-full py-4 rounded-xl border border-white/20 text-white text-center hover:bg-white/10 transition-colors">
-                    Sebagai Warga
-                </a>
+                <div>
+                    <a href="{{ route('warga.register') }}" class="block w-full py-4 rounded-xl border border-white/20 text-white text-center hover:bg-white/10 transition-colors">
+                        Sebagai Warga
+                    </a>
+                    <p class="mt-2 text-center text-white/60 text-xs">
+                        Belum punya akun? <a href="{{ route('warga.register') }}" class="text-emerald-400 hover:text-emerald-300 font-medium">Daftar</a> atau
+                        <a href="{{ route('warga.login') }}" class="text-emerald-400 hover:text-emerald-300 font-medium">Masuk</a>
+                    </p>
+                </div>
             </div>
 
             <div class="mt-8 text-center">
