@@ -30,6 +30,7 @@
                 <!-- Hidden system fields (auto-filled from session) -->
                 <input type="hidden" name="status" value="pending">
                 <input type="hidden" name="reporter_name" value="{{ session('auth_user_name', 'Warga') }}">
+                <input type="hidden" name="reporter_phone_number" value="{{ session('auth_user_phone', '') }}">
 
                 <!-- Location status indicator -->
                 <div id="location-status" class="mb-4 p-3 rounded-lg bg-[#1a3326]/50 border border-[#4a6a56]/30 text-xs text-emerald-200/70 hidden flex items-center gap-2">

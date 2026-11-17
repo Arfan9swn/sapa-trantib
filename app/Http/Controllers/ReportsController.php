@@ -77,8 +77,9 @@ class ReportsController extends Controller
     {
         // Auto-fill system fields before validation (guaranteed to be present)
         $request->merge([
-            'status'          => $request->input('status', 'pending'),
-            'reporter_name'   => $request->input('reporter_name', session('auth_user_name', 'Warga')),
+            'status'              => $request->input('status', 'pending'),
+            'reporter_name'       => $request->input('reporter_name', session('auth_user_name', 'Warga')),
+            'reporter_phone_number'=> session('auth_user_phone', ''),
         ]);
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [

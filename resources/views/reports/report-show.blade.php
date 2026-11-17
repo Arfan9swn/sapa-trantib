@@ -4,13 +4,6 @@
 
 @section('content')
 <div class="min-h-screen w-full relative overflow-hidden flex">
-    <!-- Left panel -->
-    <div class="md:w-1/2 bg-gradient-to-r from-[#1a2e1a] via-black/70 to-black/80 p-8 md:p-16 flex flex-col justify-center text-white relative z-10 hidden md:block">
-        <div class="max-w-md">
-            <h2 class="text-3xl font-bold text-white mb-2">{{ $report->title }}</h2>
-            <p class="text-white/90 text-sm mb-8">Detail laporan</p>
-        </div>
-    </div>
 
     <!-- Main Content -->
     <div class="flex-1 p-8 md:p-16 bg-[#1a3326] min-h-screen">
@@ -43,17 +36,29 @@
                     RT {{ $report->reporter_rt }}
                 </span>
                 @endif
+                
+                <!-- Category & Subcategory Pills -->
+                @if($report->category || $report->subCategory)
+                <div class="flex gap-2 mb-4 w-full">
+                    @if($report->category)
+                    <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">{{ $report->category->name }}</span>
+                    @endif
+                    @if($report->subCategory)
+                    <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">{{ $report->subCategory->name }}</span>
+                    @endif
+                </div>
+                @endif
             </div>
 
             <!-- Main Image Area -->
-            <div class="h-64 bg-[#2d4a3a] rounded-2xl flex items-center justify-center mb-8">
+            <div class="h-64 bg-[#2d4a3a] rounded-2xl flex flex-col items-center justify-center pb-6">
                 <svg class="w-16 h-16 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path>
                 </svg>
             </div>
 
             <!-- Location Info -->
-            <div class="flex items-start gap-4 mb-8">
+            <div class="flex items-start gap-4 mb-8 mt-8    ">
                 <div class="w-8 h-8 bg-[#3d5c4c] rounded-lg flex items-center justify-center text-white flex-shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -61,7 +66,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-white text-sm font-medium">{{ $report->latitude ?? '-' }}°, {{ $report->longitude ?? '-' }}°</p>
+                    <p class="text-white text-sm font-medium">{{ data_get($report->attributes, 'latitude', '-') }}°, {{ data_get($report->attributes, 'longitude', '-') }}°</p>
                     <p class="text-white/80 text-sm">{{ $report->reporter_location ?? '-' }}</p>
                 </div>
             </div>

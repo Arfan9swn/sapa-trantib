@@ -45,6 +45,7 @@ class WargaRegisterController extends Controller
         $request->session()->put('auth_user_id', $user->user_id);
         $request->session()->put('auth_user_role', $user->role);
         $request->session()->put('auth_user_name', $user->full_name);
+        $request->session()->put('auth_user_phone', $user->phone_number);
         $request->session()->regenerate();
 
         return redirect()->route('warga.reports.create')
