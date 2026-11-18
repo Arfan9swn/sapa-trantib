@@ -23,32 +23,31 @@
 
             <!-- Status Pills -->
             <div class="flex gap-3 mb-8">
-                <span class="bg-[#3d5c4c] text-white px-6 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">
-                    @php
-                        $statusBg = 'bg-[#3d5c4c]';
-                        switch ($report->status) {
-                            case 'resolved': $statusBg = 'bg-emerald-600'; break;
-                            case 'rejected': $statusBg = 'bg-red-600'; break;
-                            default: $statusBg = 'bg-[#3d5c4c]';
-                        }
-                    @endphp
-                    {{ ucfirst($report->status ?? 'pending') }}
-                </span>
-                @if($report->category)
-                <span class="bg-[#3d5c4c] text-white px-6 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">
-                    {{ $report->category->name }}
-                </span>
-                @endif
-                
+                @php
+                    $status = $report->status ?? 'pending';
+                    $statusBg = match($status) {
+                        'pending' => 'bg-yellow-100 text-yellow-800',
+                        'rejected' => 'bg-red-100 text-red-800',
+                        'resolved' => 'bg-blue-100 text-blue-800',
+                        default => 'bg-[#3d5c4c] text-white',
+                    };
+                    $statusBorder = match($status) {
+                        'pending' => 'border-yellow-500',
+                        'rejected' => 'border-red-500',
+                        'resolved' => 'border-blue-500',
+                        default => 'border-[#4a6a56]',
+                    };
+                @endphp
+                <span class="flex items-center rounded-full px-3 py-1.5 text-sm font-medium {{ $statusBg }} {{ $statusBorder }}">{{ ucfirst($status) }}</span>
                 
                 <!-- Category & Subcategory Pills -->
                 @if($report->category || $report->subCategory)
-                <div class="flex gap-2 mb-4 w-full">
+                <div class="flex gap-3">
                     @if($report->category)
-                    <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">{{ $report->category->name }}</span>
+                    <span class="bg-[#3d5c4c] flex items-center rounded-full px-3 py-1.5 text-sm font-medium border border-[#4a6a56]">{{ $report->category->name }}</span>
                     @endif
                     @if($report->subCategory)
-                    <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">{{ $report->subCategory->name }}</span>
+                    <span class="bg-[#3d5c4c] flex items-center rounded-full px-3 py-1.5 text-sm font-medium border border-[#4a6a56]">{{ $report->subCategory->name }}</span>
                     @endif
                 </div>
                 @endif
