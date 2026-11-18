@@ -40,7 +40,7 @@
             <!-- Reports Grid -->
             <div class="space-y-4">
                 @forelse($reports as $report)
-                <div class="bg-white rounded-2xl shadow-sm border border-white/20 overflow-hidden">
+                <div class="rounded-2xl shadow-sm border border-white/20 overflow-hidden">
                     <div class="flex flex-col md:flex-row">
                         <!-- Thumbnail -->
                         <div class="w-full md:w-48 h-48 md:h-auto bg-[#2d4a3a] flex items-center justify-center">
@@ -49,8 +49,8 @@
 
                         <!-- Content -->
                         <div class="p-6 flex-1">
-                            <h3 class="text-xl font-bold text-[#1a3326] mb-2">{{ $report->title }}</h3>
-                            <p class="text-[#1a3326]/70 text-sm mb-4 line-clamp-3">{{ $report->description }}</p>
+                            <h3 class="text-xl font-bold text-[#ffffff] mb-2">{{ $report->title }}</h3>
+                            <p class="text-[#ffffff]/70 text-sm mb-4 line-clamp-3">{{ $report->description }}</p>
                             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                                 <div class="flex gap-2">
                                     <a href="{{ route('reports.show', $report->report_id) }}" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors border border-[#4a6a56]">
@@ -62,13 +62,12 @@
                                     <form action="{{ route('reports.destroy', $report->report_id) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="bg-[#a63d3d] hover:bg-[#8f3333] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-[#c96b6b]">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            <svg class="w-full h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             Hapus
                                         </button>
                                     </form>
                                     @endif
                                 </div>
-
                                 </div>
                             </div>
                         </div>
