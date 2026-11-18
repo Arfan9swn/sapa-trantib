@@ -174,10 +174,35 @@ Route::get('/categories/{category}/edit', function ($category) {
 // ---------------------------------------------------------------------------
 // Reports (reps)
 // ---------------------------------------------------------------------------
-Route::get('/reports', function () {
-    $reports = Reps::with('category', 'subCategory', 'comments', 'media')
-        ->latest()->get();
-    return view('reports.report-index', compact('reports'));
+Route::get('/reports', function (Request $request) {
+    $query = Reps::with(['category', 'subCategory', 'media']);
+
+    // State filter
+    if ($request->filled('status')) {
+        $status = $request->status;
+        $statusMap = ['pending' => 'pending', 'denied' => 'rejected', 'complete' => 'resolved'];
+        if (isset($statusMap[$status])) {
+            $query->where('status', $statusMap[$status]);
+        }
+    }
+
+    // Category filter
+    if ($request->filled('category_id')) {
+        $query->where('category_id', $request->category_id);
+    }
+
+    // Subcategory filter
+    if ($request->filled('sub_category_id')) {
+        $query->where('sub_category_id', $request->sub_category_id);
+    }
+
+    $reports = $query->latest()->paginate(15)->withQueryString();
+    $categories = App\Models\Cat::all();
+    $subCategories = $request->filled('category_id')
+        ? App\Models\SubCat::where('category_id', $request->category_id)->get()
+        : collect();
+
+    return view('reports.report-index', compact('reports', 'request', 'categories', 'subCategories'));
 })->name('reports.index');
 
 Route::get('/reports/create', [App\Http\Controllers\ReportsController::class, 'create'])->name('reports.create');

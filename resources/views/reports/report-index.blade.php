@@ -19,23 +19,67 @@
                 </span>
             </div>
 
-            <!-- Search Bar -->
-            <div class="flex gap-2 mb-6">
-                <div class="flex-1 relative">
-                    <input type="text" placeholder="Cari laporan anda..." class="w-full pl-10 pr-10 py-3 rounded-xl bg-white border border-white/30 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all">
-                    <div class="absolute left-3 top-1/2 -translate-y-1/2 text-white/60">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
+            <!-- Filter Form -->
+            <form method="GET" class="flex flex-row sm:flex-row gap-4 mb-6 max-w-2xl">
+                <div class="flex-1 sm:flex-1">
+                    <select name="status" class="block w-full rounded-xl border border-green-300 bg-green-100 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
+                        <option value="" {{ $request->status == '' ? 'selected' : '' }}>Semua Status</option>
+                        <option value="pending" {{ $request->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="denied" {{ $request->status == 'denied' ? 'selected' : '' }}>Ditolak</option>
+                        <option value="complete" {{ $request->status == 'complete' ? 'selected' : '' }}>Selesai</option>
+                    </select>
                 </div>
-                <button class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-6 py-3 rounded-xl font-medium transition-colors border border-[#4a6a56]">Cari</button>
-            </div>
+                <div class="flex-1 sm:flex-1">
+                    <select name="category_id" class="block w-full rounded-xl border border-green-300 bg-green-100 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" on="change-category">
+                        <option value="" {{ $request->category_id == '' ? 'selected' : '' }}>Semua Kategori</option>
+                        @foreach($categories as $cat)
+                        <option value="{{ $cat->category_id }}" {{ $request->category_id == $cat->category_id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1 sm:flex-1">
+                    <select name="sub_category_id" class="block w-full rounded-xl border border-green-300 bg-green-100 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" id="subCategoryFilter">
+                        <option value="" {{ $request->sub_category_id == '' ? 'selected' : '' }}>Semua Sub-Kategori</option>
+                        @foreach($subCategories as $sc)
+                        <option value="{{ $sc->sub_category_id }}" {{ $request->sub_category_id == $sc->sub_category_id ? 'selected' : '' }}>{{ $sc->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1 sm:flex-1">
+                    <input type="text" name="search" placeholder="Cari laporan..." class="block w-full rounded-xl border border-green-300 bg-green-100 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" value="{{ $request->search ?? '' }}">
+                </div>
+                <button type="submit" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-6 py-3 rounded-xl font-medium transition-colors border border-[#4a6a56]">Filter</button>
+            </form>
 
-            <!-- Filter Pills -->
-            <div class="flex gap-3 mb-8 overflow-x-auto pb-2">
-                <span class="bg-[#d97706] text-white px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-[#d97706]">Pending</span>
-                <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-[#4a6a56]">Bencana alam</span>
-                <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-[#4a6a56]">Banjar banding</span>
-            </div>
+            <!-- Subcategory AJAX script -->
+            <script>
+            function loadSubCategories(categoryId) {
+                axios.get('/api/subcategories', { params: { category_id: categoryId } })
+                    .then(response => {
+                        const subCategoryFilter = document.getElementById('subCategoryFilter');
+                        subCategoryFilter.innerHTML = '<option value="">Semua Sub-Kategori</option>';
+                        response.data.forEach(subCat => {
+                            const option = document.createElement('option');
+                            option.value = subCat.sub_category_id;
+                            option.text = subCat.name;
+                            subCategoryFilter.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading subcategories:', error);
+                    });
+            }
+
+            // Handle category change
+            const categorySelect = document.querySelector('select[name="category_id"]');
+            categorySelect.addEventListener('change', function() {
+                const categoryId = this.value;
+                loadSubCategories(categoryId);
+            });
+            </script>
+
+            <!-- Reports Grid -->
+            <div class="space-y-4">
 
             <!-- Reports Grid -->
             <div class="space-y-4">
