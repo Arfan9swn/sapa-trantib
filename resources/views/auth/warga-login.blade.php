@@ -20,7 +20,7 @@
     <div class="relative z-10 flex w-full h-full items-center p-6 md:p-16 lg:p-24">
         <div class="w-full max-w-md">
             <div class="absolute top-4 left-4">
-                <a href="{{ route('') }}" class="bg-white/10 hover:bg-white/20 rounded-lg p-2 flex items-center gap-2 text-white/60 text-sm transition-colors">
+                <a href="javascript:history.back()" class="bg-white/10 hover:bg-white/20 rounded-lg p-2 flex items-center gap-2 text-white/60 text-sm transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7m0 0l7 7-7 7M5 10v10a3 3 0 003 3h10a3 3 0 003-3v-10M2 7a2 2 0 012 2h2m2-5a2 2 0 012 2h2m2-5a2 2 0 012 2h2"></path></svg>
                     Kembali
                 </a>

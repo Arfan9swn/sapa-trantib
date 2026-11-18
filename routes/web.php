@@ -300,19 +300,24 @@ Route::prefix('rts')->name('rts.')->group(function () {
     Route::get('/check-rt-number', [App\Http\Controllers\RTController::class, 'checkRtNumber'])->name('check-rt-number');
 });
 // ---------------------------------------------------------------------------
-Route::post('/logout', function () {
-    // Logout dari guard web bawaan (jika ada)
+Route::post('/logout', function (Request $request) {
+    auth()->logout();
     if (auth()->guard('web')->check()) {
         auth()->guard('web')->logout();
     }
 
-    // Hapus semua session kustom yang Anda buat
-    session()->forget(['auth_user_id', 'auth_user_role', 'auth_user_name']);
-    
-    session()->invalidate();
-    session()->regenerateToken();
+    session()->forget(['auth_user_id', 'auth_user_role', 'auth_user_name',
+        'warga_user_id', 'warga_user_role', 'warga_user_name']);
 
-    return redirect()->route('admin.login');
+    $request->session()->regenerateToken();
+
+    return redirect()->route('warga.login')
+        ->with('success', 'Anda telah berhasil logout.')
+        ->withHeaders([
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
 })->name('logout');
 
 // ---------------------------------------------------------------------------
