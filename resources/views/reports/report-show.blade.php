@@ -115,14 +115,14 @@
             </div>
 
             <!-- Comments Section -->
-            <div class="bg-white rounded-2xl p-6 border border-white/20">
-                <h3 class="text-xl font-bold text-[#1a3326] mb-4">Komentar</h3>
+            <div class="bg-[#1a3326] rounded-xl p-6 border border-[#3d5c4c]/20">
+                <h3 class="text-xl font-bold text-white mb-4">Komentar</h3>
 
                 <!-- Comment Form -->
                 <form action="{{ route('reports.comments.store', $report->report_id) }}" method="POST" class="mb-6">
                     @csrf
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <textarea name="body" rows="2" placeholder="Tulis komentar..." class="w-full sm:w-auto flex-1 px-4 py-3 rounded-xl bg-[#1a3326] border border-[#3d5c4c] text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all"></textarea>
+                    <textarea name="body" rows="2" placeholder="Tulis komentar..." class="w-full mb-6 px-4 py-3 rounded-xl bg-[#1a3326] border border-[#3d5c4c]/50 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all"></textarea>
+                    <div class="flex gap-3">
                         <button type="submit" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-medium transition-colors">Kirim</button>
                     </div>
                 </form>
@@ -131,14 +131,17 @@
                 <div class="space-y-4">
                     @forelse($report->comments as $comment)
                     <div class="flex gap-3">
-                        <div class="w-8 h-8 bg-[#3d5c4c] rounded-full flex items-center justify-center text-white flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 rounded-lg bg-[#3d5c4c] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
                         </div>
-                        <div class="flex-1">
-                            <p class="text-[#1a3326] text-sm">{{ $comment->body }}</p>
-                            <p class="text-[#1a3326]/50 text-xs mt-1">{{ $comment->created_at ?? '' }}</p>
+                        <div class="flex-1 text-sm">
+                            <div class="flex justify-between mb-1">
+                                <p class="text-white font-medium">{{ $comment->user ? $comment->user->full_name : 'Anonymous' }}</p>
+                                <p class="text-[#1a3326]/60 text-xs">{{ $comment->created_at ?? '' }}</p>
+                            </div>
+                            <p class="text-[#c9d1d9] text-sm leading-relaxed">{{ $comment->body }}</p>
                         </div>
                     </div>
                     @empty
