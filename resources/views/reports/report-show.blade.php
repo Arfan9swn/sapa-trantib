@@ -138,7 +138,7 @@
                         </div>
                         <div class="flex-1 text-sm">
                             <div class="flex justify-between mb-1">
-                                <p class="text-white font-medium">{{ $comment->user ? $comment->user->full_name : 'Anonymous' }}</p>
+                                <p class="text-white font-medium">{{ $comment->user ? $comment->user->full_name : 'Pengguna' }}</p>
                                 <p class="text-[#1a3326]/60 text-xs">{{ $comment->created_at ?? '' }}</p>
                             </div>
                             <p class="text-[#c9d1d9] text-sm leading-relaxed">{{ $comment->body }}</p>

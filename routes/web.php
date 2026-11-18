@@ -198,6 +198,7 @@ Route::post('/reports/{report}/comments', function ($report) {
     $report = Reps::findOrFail($report);
     RepsComment::create([
         'report_id'   => $report->report_id,
+        'user_id'     => session('auth_user_id'),
         'body'        => request('body'),
         'created_at'  => now(),
     ]);

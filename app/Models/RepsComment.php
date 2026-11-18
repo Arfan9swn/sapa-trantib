@@ -17,8 +17,8 @@ class RepsComment extends Model
 
     public $timestamps = false;
 
-    #[Fillable(['report_id', 'body', 'created_at'])]
-    protected $fillable = ['report_id', 'body', 'created_at'];
+    #[Fillable(['report_id', 'body', 'created_at', 'user_id'])]
+    protected $fillable = ['report_id', 'body', 'created_at', 'user_id'];
 
     
     public function report(): BelongsTo
