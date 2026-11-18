@@ -95,6 +95,11 @@
                         <div class="p-6 flex-1">
                             <h3 class="text-xl font-bold text-[#ffffff] mb-2">{{ $report->title }}</h3>
                             <p class="text-[#ffffff]/70 text-sm mb-4 line-clamp-3">{{ $report->description }}</p>
+
+<!-- Report Submission Date -->
+<div class="flex items-center gap-2 mb-4 text-sm text-white/60 mt-2">
+    <span>{{ \Illuminate\Support\Carbon::parse($report->submitted_at)->format('d F Y H:i') }}</span>
+</div>
                             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                                 <div class="flex gap-2">
                                     <a href="{{ route('reports.show', $report->report_id) }}" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors border border-[#4a6a56]">
