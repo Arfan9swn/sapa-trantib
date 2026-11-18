@@ -65,8 +65,8 @@
 
                 <!-- Actions -->
                 <div class="space-y-3">
-                    <a href="{{ route('admin.login') }}" class="w-full py-3.5 rounded-xl bg-white/10 border border-white/20 text-white font-semibold text-center hover:bg-white/20 transition-all duration-200 block text-decoration-none">
-                        Kembali ke Halaman Masuk
+                    <a href="/" class="w-full py-3.5 rounded-xl bg-white/10 border border-white/20 text-white font-semibold text-center hover:bg-white/20 transition-all duration-200 block text-decoration-none">
+                        Kembali ke Beranda
                     </a>
                 </div>
             </div>

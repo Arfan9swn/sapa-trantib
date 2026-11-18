@@ -14,9 +14,8 @@
         <!-- Navbar (Sapa-Trantib at top-left, no login/register) -->
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex items-center gap-3 text-left">
-                <span class="text-2xl lg:text-3xl font-serif italic text-white tracking-tight">Sapa-Trantib</span>
+                <span class="text-2xl lg:text-3xl font-serif italic text-white tracking-tight">Sapa-Trinib</span>
             </div>
-        </div>
 
         <!-- Hero -->
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24">

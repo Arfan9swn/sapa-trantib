@@ -146,7 +146,7 @@ class ReportsController extends Controller
             ? SubCat::where('category_id', $categoryId)->get()
             : collect();
 
-        return view('reports.warga-create', compact('categories', 'subCategories', 'categoryId'));
+        return view('reports.create', compact('categories', 'subCategories', 'categoryId'));
     }
 
     /** Delete a report. */

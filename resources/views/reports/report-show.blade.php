@@ -23,19 +23,23 @@
 
             <!-- Status Pills -->
             <div class="flex gap-3 mb-8">
-                <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">
+                <span class="bg-[#3d5c4c] text-white px-6 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">
+                    @php
+                        $statusBg = 'bg-[#3d5c4c]';
+                        switch ($report->status) {
+                            case 'resolved': $statusBg = 'bg-emerald-600'; break;
+                            case 'rejected': $statusBg = 'bg-red-600'; break;
+                            default: $statusBg = 'bg-[#3d5c4c]';
+                        }
+                    @endphp
                     {{ ucfirst($report->status ?? 'pending') }}
                 </span>
                 @if($report->category)
-                <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">
+                <span class="bg-[#3d5c4c] text-white px-6 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">
                     {{ $report->category->name }}
                 </span>
                 @endif
-                @if($report->reporter_rt)
-                <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium border border-[#4a6a56]">
-                    RT {{ $report->reporter_rt }}
-                </span>
-                @endif
+                
                 
                 <!-- Category & Subcategory Pills -->
                 @if($report->category || $report->subCategory)
@@ -51,10 +55,27 @@
             </div>
 
             <!-- Main Image Area -->
-            <div class="h-64 bg-[#2d4a3a] rounded-2xl flex flex-col items-center justify-center pb-6">
+            <div class="h-64 bg-[#2d4a3a] rounded-2xl overflow-hidden flex flex-col items-center justify-center pb-6">
+                <!-- Report Images -->
+                @if($report->media->isNotEmpty())
+                <div class="grid grid-cols-2 gap-2 w-full">
+                    @foreach($report->media as $media)
+                    <div class="rounded-lg overflow-hidden border border-[#4a6a56]">
+                        @if(str_contains($media->media_type, 'image'))
+                        <img src="{{ asset('storage/' . $media->media_url) }}" class="w-full h-64 object-contain">
+                        @else
+                        <svg class="w-full h-48 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path>
+                        </svg>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+                @else
                 <svg class="w-16 h-16 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path>
                 </svg>
+                @endif
             </div>
 
             <!-- Location Info -->
@@ -68,6 +89,9 @@
                 <div>
                     <p class="text-white text-sm font-medium">{{ data_get($report->attributes, 'latitude', '-') }}°, {{ data_get($report->attributes, 'longitude', '-') }}°</p>
                     <p class="text-white/80 text-sm">{{ $report->reporter_location ?? '-' }}</p>
+                </div>
+                <div class="flex items-center mb-1">
+                    <span class="text-m font-medium text-white">RT {{ $report->reporter_rt }}</span>
                 </div>
             </div>
 

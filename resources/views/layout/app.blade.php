@@ -120,13 +120,25 @@
                                 $navUserRole = $navAuthUser->role ?? session('auth_user_role') ?? '';
                                 $navIsAdmin = in_array(strtolower($navUserRole), ['admin', 'super_admin']);
                                 $navDisplayName = '';
+                                $navDisplayPhone = '';
                                 if ($navIsAdmin) {
                                     $navDisplayName = $navAuthUser?->username ?? session('auth_user_name') ?? '';
+                                } else {
+                                    $navDisplayName = session('auth_user_name') ?? 'Warga';
+                                    $navDisplayPhone = session('auth_user_phone') ?? '';
                                 }
                             @endphp
                             @if ($navIsAdmin && $navDisplayName !== '')
                                 <div class="text-right hidden md:block">
                                     <p class="text-sm text-[#8fd89b] font-medium">Selamat datang kembali, {{ $navDisplayName }} !</p>
+                                </div>
+                            @endif
+                            @if (!$navIsAdmin && $navDisplayName !== '')
+                                <div class="text-right hidden md:block">
+                                    <p class="text-sm text-[#8fd89b] font-medium">Selamat datang kembali, {{ $navDisplayName }}</p>
+                                    @if ($navDisplayPhone !== '')
+                                        <p class="text-xs text-white/60 mt-1">Nomor telepon: {{ $navDisplayPhone }}</p>
+                                    @endif
                                 </div>
                             @endif
                         </div>

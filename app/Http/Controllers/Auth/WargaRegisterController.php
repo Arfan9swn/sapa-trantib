@@ -48,7 +48,7 @@ class WargaRegisterController extends Controller
         $request->session()->put('auth_user_phone', $user->phone_number);
         $request->session()->regenerate();
 
-        return redirect()->route('warga.reports.create')
+        return redirect()->route('reports.create')
             ->with('status', 'Selamat datang, ' . e($user->full_name) . '. Akun warga Anda telah aktif.');
     }
 }

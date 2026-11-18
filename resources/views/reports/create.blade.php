@@ -21,7 +21,12 @@
                     <label for="description" class="block text-white font-medium text-sm mb-2">Isi laporan</label>
                     <textarea name="description" id="description" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan isi laporan..." rows="4" required></textarea>
                 </div>
-                
+
+                <div class="mb-4">
+                    <label for="reporter_location" class="block text-white font-medium text-sm mb-2">Lokasi</label>
+                    <input type="text" name="reporter_location" id="reporter_location" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan lokasi laporan..." value="{{ session('reporter_location', '') }}">
+                </div>
+
                 <div class="grid grid-cols-3 gap-4 mb-4">
                     <div>
                         <label for="reporter_rt" class="block text-white font-medium text-sm mb-2">RT</label>
