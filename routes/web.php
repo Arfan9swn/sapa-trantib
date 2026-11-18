@@ -205,11 +205,7 @@ Route::post('/reports/{report}/comments', function ($report) {
     return back()->with('success', 'Komentar berhasil ditambahkan');
 })->name('reports.comments.store');
 
-Route::delete('/reports/{report}', function ($report) {
-    $report = Reps::findOrFail($report);
-    $report->delete();
-    return back()->with('success', 'Laporan berhasil dihapus');
-})->name('reports.destroy');
+Route::delete('/reports/{report}', [App\Http\Controllers\ReportsController::class, 'destroy'])->name('reports.destroy');
 
 // ---------------------------------------------------------------------------
 // Statistics

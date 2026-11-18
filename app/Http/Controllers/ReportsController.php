@@ -151,11 +151,20 @@ class ReportsController extends Controller
 
     /** Delete a report. */
     public function destroy(Request $request, Reps $report)
-    {
-        $report->delete(); // Delete cascades to media, comments, activities
-
-        return redirect()->route('reports.admin')
-            ->with('success', 'Laporan berhasil dihapus.');
+{
+    // Authorization check: user must be admin/super_admin or the report owner
+    $userRole = session('auth_user_role') ?? '';
+    $userPhone = session('auth_user_phone') ?? '';
+    
+    if (!in_array(strtolower($userRole), ['admin', 'super_admin'], true)) {
+        if (strtolower($report->reporter_phone_number) !== strtolower($userPhone)) {
+            return back()->with('error', 'Anda tidak memiliki izin menghapus laporan ini.');
+        }
     }
+    
+    $report->delete();
+    
+    return redirect()->route('reports.admin')->with('success', 'Laporan berhasil dihapus.');
+}
 }
  

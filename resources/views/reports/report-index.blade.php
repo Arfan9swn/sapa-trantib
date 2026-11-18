@@ -57,6 +57,8 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                         Lihat
                                     </a>
+                                    <div class="flex gap-2">
+                                    @if (session('auth_user_role') == 'admin' || session('auth_user_role') == 'super_admin' || strtolower($report->reporter_phone_number) == strtolower(session('auth_user_phone')))
                                     <form action="{{ route('reports.destroy', $report->report_id) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="bg-[#a63d3d] hover:bg-[#8f3333] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-[#c96b6b]">
@@ -64,6 +66,9 @@
                                             Hapus
                                         </button>
                                     </form>
+                                    @endif
+                                </div>
+
                                 </div>
                             </div>
                         </div>
