@@ -35,8 +35,8 @@ class Reps extends Model
     {
         return [
             'status' => 'string',
-            'latitude' => 'decimal',
-            'longitude' => 'decimal',
+            'latitude' => 'decimal:6',
+            'longitude' => 'decimal:6',
             'boosts' => 'integer',
             'submitted_at' => 'datetime',
             'resolved_at' => 'datetime',

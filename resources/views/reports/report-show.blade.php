@@ -86,7 +86,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-white text-sm font-medium">{{ data_get($report->attributes, 'latitude', '-') }}°, {{ data_get($report->attributes, 'longitude', '-') }}°</p>
+                    <p class="text-white text-sm font-medium">{{ $report->latitude ?? '-' }}°, {{ $report->longitude ?? '-' }}°</p>
                     <p class="text-white/80 text-sm">{{ $report->reporter_location ?? '-' }}</p>
                 </div>
                 <div class="flex items-center mb-1">

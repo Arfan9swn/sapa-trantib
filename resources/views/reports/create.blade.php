@@ -24,8 +24,60 @@
 
                 <div class="mb-4">
                     <label for="reporter_location" class="block text-white font-medium text-sm mb-2">Lokasi</label>
-                    <input type="text" name="reporter_location" id="reporter_location" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan lokasi laporan..." value="{{ session('reporter_location', '') }}">
+                    <div class="flex items-center gap-2">
+                        <input type="text" name="reporter_location" id="reporter_location" value="{{ session('reporter_location', '') }}" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan lokasi laporan...">
+                    </div>
+                <!-- Hidden fields for GPS coordinates -->
+                <input type="hidden" name="latitude" id="latitude" value="">
+                <input type="hidden" name="longitude" id="longitude" value="">
                 </div>
+                <script>
+    // GPS Capture - Show coordinates above location input
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!navigator.geolocation) {
+            return;
+        }
+        
+        // Request GPS location
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                var latDisplay = lat.toFixed(6);
+                var lngDisplay = lng.toFixed(6);
+                
+                // Set hidden fields for database storage
+                document.getElementById('latitude').value = latDisplay;
+                document.getElementById('longitude').value = lngDisplay;
+                
+                // Create coordinate display element
+                var coordsDiv = document.createElement('div');
+                coordsDiv.style.cssText = 'background: #10b981; color: white; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.875rem;';
+                coordsDiv.innerHTML = 'Koordinat GPS Terkapture: ' + latDisplay + ', ' + lngDisplay;
+                
+                // Insert above the location input field (before the flex gap-2 div)
+                var locGroup = document.querySelector('div.flex.items-center.gap-2');
+                if (locGroup && locGroup.parentNode) {
+                    locGroup.parentNode.insertBefore(coordsDiv, locGroup);
+                } else {
+                    // Fallback: find the mb-4 div
+                    var mb4 = document.querySelector('div.mb-4');
+                    if (mb4) {
+                        mb4.parentNode.insertBefore(coordsDiv, mb4);
+                    }
+                }
+            },
+            function(error) {
+                // Keep the location input available for manual entry
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    });
+</script>
 
                 <div class="grid grid-cols-3 gap-4 mb-4">
                     <div>
@@ -153,6 +205,43 @@
             `;
         };
     });
+
+    // GPS Capture - Simple Console Logging
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                console.log('GPS SUCCESS - Latitude:', lat.toFixed(6), 'Longitude:', lng.toFixed(6));
+                console.log('GPS Coordinates captured - Lat: ' + lat.toFixed(6) + ', Lng: ' + lng.toFixed(6));
+                
+                // Set hidden fields for database storage
+                document.getElementById('latitude').value = lat.toFixed(6);
+                document.getElementById('longitude').value = lng.toFixed(6);
+                
+                // Show alert with coordinates
+                alert('Lokasi GPS: ' + lat.toFixed(6) + ', ' + lng.toFixed(6));
+            },
+            function(error) {
+                console.log('GPS ERROR -', error.code, error.message);
+                if (error.code === 1) {
+                    console.log('GPS: Permission denied by user');
+                } else if (error.code === 2) {
+                    console.log('GPS: Position unavailable');
+                } else if (error.code === 3) {
+                    console.log('GPS: Timeout');
+                }
+                alert('GPS error: ' + error.message);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        console.log('GPS: Browser does not support geolocation');
+    }
 </script>
 @endpush
 @endsection
