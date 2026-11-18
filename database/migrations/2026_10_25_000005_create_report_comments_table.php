@@ -11,10 +11,12 @@ return new class extends Migration
         Schema::create('report_comments', function (Blueprint $table) {
             $table->unsignedInteger('comment_id')->primary()->autoIncrement();
             $table->unsignedInteger('report_id');
+            $table->unsignedInteger('user_id');
             $table->text('body');
             $table->timestamp('created_at');
 
             $table->foreign('report_id')->references('report_id')->on('reports')->onDelete('cascade');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
         });
     }
 

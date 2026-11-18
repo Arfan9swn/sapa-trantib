@@ -25,4 +25,9 @@ class RepsComment extends Model
     {
         return $this->belongsTo(Reps::class, 'report_id', 'report_id');
     }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
 }
