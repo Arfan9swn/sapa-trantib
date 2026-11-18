@@ -135,6 +135,23 @@
     </div>
 </div>
 
+<!-- GPS Modal -->
+<div id="gpsModal" class="fixed inset-0 z-50 hidden">
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeGpsModal()"></div>
+    <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
+        <div class="bg-[#2d4a3a] rounded-2xl border border-[#4a6a56] p-6 w-full max-w-sm shadow-xl text-center">
+            <div class="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+            </div>
+            <h3 id="gpsModalTitle" class="text-white font-semibold text-lg mb-2">Lokasi GPS Terkapture</h3>
+            <p id="gpsModalMessage" class="text-emerald-200 text-sm"></p>
+            <button type="button" onclick="closeGpsModal()" class="mt-4 w-full py-2 rounded-xl bg-[#4a6a56] text-white text-sm font-medium hover:bg-[#4a6a56]/80 transition-colors">Tutup</button>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -219,8 +236,8 @@
                 document.getElementById('latitude').value = lat.toFixed(6);
                 document.getElementById('longitude').value = lng.toFixed(6);
                 
-                // Show alert with coordinates
-                alert('Lokasi GPS: ' + lat.toFixed(6) + ', ' + lng.toFixed(6));
+                // Show modal with coordinates
+                openGpsModal(lat.toFixed(6), lng.toFixed(6));
             },
             function(error) {
                 console.log('GPS ERROR -', error.code, error.message);
@@ -231,7 +248,7 @@
                 } else if (error.code === 3) {
                     console.log('GPS: Timeout');
                 }
-                alert('GPS error: ' + error.message);
+                openGpsErrorModal(error.message);
             },
             {
                 enableHighAccuracy: true,
@@ -242,6 +259,33 @@
     } else {
         console.log('GPS: Browser does not support geolocation');
     }
+    
+    // GPS Modal Functions
+    function openGpsModal(lat, lng) {
+        document.getElementById('gpsModalTitle').textContent = 'Lokasi GPS Ditangkap';
+        document.getElementById('gpsModalMessage').textContent = 'Koordinat: ' + lat + ', ' + lng;
+        document.getElementById('gpsModal').classList.remove('hidden');
+    }
+    
+    function openGpsErrorModal(message) {
+        document.getElementById('gpsModalTitle').textContent = 'GPS Error';
+        document.getElementById('gpsModalMessage').textContent = message;
+        document.getElementById('gpsModalMessage').className = 'text-red-300 text-sm';
+        document.getElementById('gpsModal').classList.remove('hidden');
+    }
+    
+    function closeGpsModal() {
+        document.getElementById('gpsModal').classList.add('hidden');
+        // Reset message class
+        document.getElementById('gpsModalMessage').className = 'text-emerald-200 text-sm';
+    }
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeGpsModal();
+        }
+    });
 </script>
 @endpush
 @endsection
