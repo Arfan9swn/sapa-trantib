@@ -54,16 +54,16 @@
             </div>
 
             <!-- Main Image Area -->
-            <div class="h-64 bg-[#2d4a3a] rounded-2xl overflow-hidden flex flex-col items-center justify-center pb-6">
+            <div class="w-fit max-w-full mx-auto relative overflow-hidden rounded-2xl bg-[#2d4a3a]">
                 <!-- Report Images -->
                 @if($report->media->isNotEmpty())
-                <div class="grid grid-cols-2 gap-2 w-full">
+                <div class="flex flex-wrap gap-2">
                     @foreach($report->media as $media)
-                    <div class="rounded-lg overflow-hidden border border-[#4a6a56]">
+                    <div class="w-auto flex-shrink-0 rounded-lg overflow-hidden border border-[#4a6a56] bg-[#2d4a3a]">
                         @if(str_contains($media->media_type, 'image'))
-                        <img src="{{ asset('storage/' . $media->media_url) }}" class="w-full h-64 object-contain">
+                        <img src="{{ asset('storage/' . $media->media_url) }}" class="w-auto h-auto object-contain block" alt="{{ $media->media_url }}">
                         @else
-                        <svg class="w-full h-48 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-full h-full text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path>
                         </svg>
                         @endif
@@ -71,7 +71,7 @@
                     @endforeach
                 </div>
                 @else
-                <svg class="w-16 h-16 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-10 h-10 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path>
                 </svg>
                 @endif
