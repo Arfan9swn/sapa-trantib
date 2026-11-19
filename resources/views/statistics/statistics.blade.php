@@ -1,7 +1,20 @@
 @extends('layout.app')
 
 @section('content')
-<div class="max-w-7xl mx-auto space-y-6">
+
+    @php
+        $palette = [
+            '#3b82f6',
+            '#22d3ee',
+            '#ef4444',
+            '#f59e0b',
+            '#a855f7',
+            '#10b981',
+            '#fb923c',
+        ];
+    @endphp
+
+    <div class="max-w-7xl mx-auto space-y-6">
 
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -68,7 +81,7 @@
                 @forelse ($categories as $category)
                     <div class="flex items-center gap-2">
                         <span class="inline-block w-3 h-3 rounded-full"
-                              style="background-color: {{ $palette[$loop->index % count($palette)] ?? '#94a3b8' }};"></span>
+                              style="background-color: {{ $palette[$loop->index % count($palette ?? [])] ?? '#94a3b8' }};"></span>
                         <span class="text-sm text-[#c9e3cb]">{{ $category->name }}</span>
                     </div>
                 @empty

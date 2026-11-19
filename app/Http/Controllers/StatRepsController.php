@@ -40,6 +40,7 @@ class StatRepsController extends Controller
         $dates = [];
         $lineData = [];
         $columnDatasets = [];
+$palette = ['#94a3b8'];
 
         if ($categories->isNotEmpty() && Reps::count() > 0) {
             $firstDate = Carbon::parse(Reps::min('submitted_at'))->startOfDay();
@@ -92,7 +93,8 @@ class StatRepsController extends Controller
             'dates',
             'lineData',
             'categories',
-            'columnDatasets'
+            'columnDatasets',
+            'palette'
         ));
     }
 }
