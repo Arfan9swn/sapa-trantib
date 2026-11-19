@@ -260,6 +260,7 @@ Route::post('/reports/{report}/comments', function ($report) {
 })->name('reports.comments.store');
 
 Route::delete('/reports/{report}', [App\Http\Controllers\ReportsController::class, 'destroy'])->name('reports.destroy');
+Route::post('/reports/{report}/status', [App\Http\Controllers\ReportsController::class, 'updateStatus'])->name('reports.status.update');
 
 // ---------------------------------------------------------------------------
 // Statistics

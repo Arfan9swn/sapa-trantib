@@ -149,6 +149,29 @@ class ReportsController extends Controller
         return view('reports.create', compact('categories', 'subCategories', 'categoryId'));
     }
 
+    /** Update report status (admin/super_admin only). */
+    public function updateStatus(Request $request, Reps $report)
+    {
+        $userRole = session('auth_user_role') ?? '';
+        if (!in_array(strtolower($userRole), ['admin', 'super_admin'], true)) {
+            return back()->with('error', 'Hanya admin yang dapat mengubah status laporan.');
+        }
+
+        $request->validate([
+            'status' => 'required|in:pending,rejected,done',
+        ]);
+
+        $report->status = $request->status;
+        if ($request->status === 'done') {
+            $report->resolved_at = now();
+        } else {
+            $report->resolved_at = null;
+        }
+        $report->save();
+
+        return back()->with('success', 'Status laporan berhasil diubah.');
+    }
+
     /** Delete a report. */
     public function destroy(Request $request, Reps $report)
 {

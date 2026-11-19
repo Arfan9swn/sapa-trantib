@@ -69,11 +69,35 @@
                             </div>
 
                             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                                <div class="flex gap-2">
+                                <div class="flex gap-4">
+                                    @php
+                                        $rStatus = $report->status ?? 'pending';
+                                        $rStatusLabel = match($rStatus) {
+                                            'pending' => 'Pending',
+                                            'rejected' => 'Ditolak',
+                                            'done' => 'Selesai',
+                                            default => ucfirst($rStatus),
+                                        };
+                                        $rStatusColor = match($rStatus) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-500',
+                                            'rejected' => 'bg-red-100 text-red-800 border-red-500',
+                                            'done' => 'bg-blue-100 text-blue-800 border-blue-500',
+                                            default => 'bg-[#3d5c4c] text-white border-[#4a6a56]',
+                                        };
+                                    @endphp
                                     <a href="{{ route('reports.show', $report->report_id) }}" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors border border-[#4a6a56]">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                         Lihat
                                     </a>
+                                    <form action="{{ route('reports.status.update', $report->report_id) }}" method="POST" class="inline">
+                                        @csrf
+                                        <select name="status" onchange="this.form.submit()" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-4 py-4 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors border border-[#4a6a56]">
+                                            <option value="pending" {{ $rStatus == 'pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="rejected" {{ $rStatus == 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                                            <option value="done" {{ $rStatus == 'done' ? 'selected' : '' }}>Selesai</option>
+                                        </select>
+                                    </form>
+
                                     <form action="{{ route('reports.destroy', $report->report_id) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="bg-[#a63d3d] hover:bg-[#8f3333] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-[#c96b6b]">
