@@ -87,8 +87,12 @@
                 <div class="rounded-2xl shadow-sm border border-white/20 overflow-hidden">
                     <div class="flex flex-col md:flex-row">
                         <!-- Thumbnail -->
-                        <div class="w-full md:w-48 h-48 md:h-auto bg-[#2d4a3a] flex items-center justify-center">
-                            <svg class="w-12 h-12 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path></svg>
+                        <div class="w-full md:w-48 h-48 md:h-auto bg-[#2d4a3a] flex items-center justify-center overflow-hidden">
+                            @if($report->media->isNotEmpty())
+                                <img src="{{ asset('storage/' . $report->media->first()->media_url) }}" class="w-full h-full object-cover" alt="{{ $report->title }}">
+                            @else
+                                <svg class="w-12 h-12 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path></svg>
+                            @endif
                         </div>
 
                         <!-- Content -->

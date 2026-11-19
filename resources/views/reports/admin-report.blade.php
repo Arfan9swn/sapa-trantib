@@ -52,19 +52,23 @@
             <!-- Reports Grid -->
             <div class="space-y-4">
                 @forelse($reports as $report)
-                <div class="bg-white rounded-2xl shadow-sm border border-white/20 overflow-hidden">
+                <div class="rounded-2xl shadow-sm border border-white/20 overflow-hidden">
                     <div class="flex flex-col md:flex-row">
                         <!-- Thumbnail -->
-                        <div class="w-full md:w-48 h-48 md:h-auto bg-[#2d4a3a] flex items-center justify-center">
-                            <svg class="w-12 h-12 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path></svg>
+                        <div class="w-full md:w-48 h-48 md:h-auto bg-[#2d4a3a] flex items-center justify-center overflow-hidden">
+                            @if($report->media->isNotEmpty())
+                                <img src="{{ asset('storage/' . $report->media->first()->media_url) }}" class="w-full h-full object-cover" alt="{{ $report->title }}">
+                            @else
+                                <svg class="w-12 h-12 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path></svg>
+                            @endif
                         </div>
 
                         <!-- Content -->
                         <div class="p-6 flex-1">
-                            <h3 class="text-xl font-bold text-[#1a3326] mb-2">{{ $report->title }}</h3>
-                            <p class="text-[#1a3326]/70 text-sm mb-4 line-clamp-3">{{ $report->description }}</p>
+                            <h3 class="text-xl font-bold text-white mb-2">{{ $report->title }}</h3>
+                            <p class="text-white/70 text-sm mb-4 line-clamp-3">{{ $report->description }}</p>
 
-                            <div class="flex items-center gap-2 mb-4 text-sm text-[#1a3326] mt-2">
+                            <div class="flex items-center gap-2 mb-4 text-sm text-white/70 mt-2">
                                 <span>{{ \Illuminate\Support\Carbon::parse($report->submitted_at)->format('d F Y H:i') }}</span>
                             </div>
 
