@@ -137,7 +137,9 @@ Route::get('/admin/pending', function () {
 })->name('admin.pending');
 
 Route::post('/admin/verify/{user}', function (Request $request, User $user) {
-    if (auth()->user() === null || auth()->user()->role !== 'super_admin') {
+    $authUserId = session('auth_user_id');
+    $userRole = session('auth_user_role') ?? 'warga';
+    if ($authUserId === null || strtolower($userRole) !== 'super_admin') {
         return back()->withErrors(['error' => 'Hanya super admin yang dapat memverifikasi admin.']);
     }
 

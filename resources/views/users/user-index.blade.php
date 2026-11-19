@@ -35,6 +35,18 @@
     @if(session('info'))
     <div class="mb-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-200 text-sm">{{ session('info') }}</div>
     @endif
+    @if(session('status'))
+    <div class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-200 text-sm">{{ session('status') }}</div>
+    @endif
+    @if($errors->any())
+    <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-200 text-sm">
+        <ul class="list-disc list-inside text-sm">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
 
     <div class="bg-[#2d4a3a] rounded-2xl border border-[#4a6a56] overflow-hidden shadow-lg">
         <div class="p-6">
@@ -77,7 +89,7 @@
                                             <div class="flex items-center justify-center gap-1">
                                                 <a href="{{ route('admin-users.edit', $user->user_id) }}" class="w-8 h-8 rounded-lg bg-[#4a6a56] flex items-center justify-center text-white/80 hover:text-white hover:bg-[#4a6a56]/80 transition-colors text-xs" title="Edit pengguna"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></a>
                                                 <a href="{{ route('admin-users.show', $user->user_id) }}" class="w-8 h-8 rounded-lg bg-[#4a6a56] flex items-center justify-center text-white/80 hover:text-white hover:bg-[#4a6a56]/80 transition-colors text-xs" title="Lihat detail"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></a>
-                                                    @if(strtolower($user->role) === 'admin' && $isSuperAdmin)
+                                                    @if(strtolower($user->role) === 'admin' && $isSuperAdmin && !$user->email_verified_at)
                                                     <form method="POST" action="{{ route('admin.verify', $user->user_id) }}" class="inline">
                                                         @csrf
                                                         <button type="submit" class="w-8 h-8 rounded-lg bg-[#3d5c4c] flex items-center justify-center text-white hover:bg-[#4a6a56] transition-colors text-xs" title="Verifikasi Admin">
