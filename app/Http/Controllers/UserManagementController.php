@@ -41,8 +41,9 @@ class UserManagementController extends Controller
                 ->appends(['search' => $search]);
         }
 
-        $userRole = Session::get('auth_user_role') ?? 'warga';
-        $isSuperAdmin = $userRole === 'super_admin';
+        $authUser = User::find(Session::get('auth_user_id'));
+        $userRole = $authUser->role ?? Session::get('auth_user_role') ?? 'warga';
+        $isSuperAdmin = strtolower($userRole) === 'super_admin';
         $currentUserId = Session::get('auth_user_id');
 
         return view('users.user-index', compact('users', 'search', 'isSuperAdmin', 'currentUserId'));
