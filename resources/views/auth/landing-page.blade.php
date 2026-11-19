@@ -7,9 +7,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
 
-    <div class="min-h-screen bg-slate-950 text-slate-200 relative overflow-hidden" style="--font-serif: 'Playfair Display', ui-serif, serif;">
+    <div class="min-h-screen bg-[#2d4a3a] text-slate-200 relative overflow-hidden" style="--font-serif: 'Playfair Display', ui-serif, serif;">
         <!-- Subtle green glow on the left side -->
-        <div class="absolute top-0 left-0 w-1/3 h-full via-transparent to-transparent -z-10 pointer-events-none"></div>
+        <div class="absolute top-0 left-0 w-1/3 h-full bg-transparent -z-10 pointer-events-none"></div>
 
         <!-- Navbar (Sapa-Trantib at top-left, no login/register) -->
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -41,10 +41,10 @@
 
                 <div class="flex justify-center">
                     <div class="relative w-full max-w-md aspect-[4/5]">
-                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80"
+                        <img src="{{ asset('images/landing-report.jpg') }}"
                              alt="Warga melaporkan melalui ponsel"
                              class="w-full h-full object-cover rounded-[1.5rem] border border-slate-800 shadow-2xl shadow-black/60">
-                        <div class="absolute -inset-0.5 rounded-[1.5rem] bg-gradient-to-r from-emerald-500 to-teal-400 blur-[80px] opacity-25 -z-10"></div>
+                        <div class="absolute -inset-0.5 rounded-[1.5rem] bg-transparent -z-10"></div>
                     </div>
                 </div>
             </div>

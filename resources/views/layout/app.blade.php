@@ -6,7 +6,7 @@
     <title>Sapa-Trantib</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-[#152a20] text-gray-100 antialiased">
+<body class="{{ request()->is('/') ? 'bg-[#2d4a3a]' : 'bg-[#152a20]' }} text-gray-100 antialiased">
 
     <!-- Cek apakah ini BUKAN halaman landing page (root '/') -->
     @if (!request()->is('/'))
@@ -145,9 +145,13 @@
                     </nav>
                 @endif
 
-                <main class="flex-1 overflow-y-auto p-6 bg-[#152a20]">
+                @if (request()->is('/'))
                     @yield('content')
-                </main>
+                @else
+                    <main class="flex-1 overflow-y-auto p-6 bg-[#152a20]">
+                        @yield('content')
+                    </main>
+                @endif
             </div>
 
     @if (!request()->is('/'))
