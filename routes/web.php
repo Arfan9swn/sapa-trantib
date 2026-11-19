@@ -11,6 +11,7 @@ use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\UserTagController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\StatRepsController;
 use App\Models\User;
 use App\Models\Reps;
 use App\Models\RepsComment;
@@ -265,9 +266,7 @@ Route::post('/reports/{report}/status', [App\Http\Controllers\ReportsController:
 // ---------------------------------------------------------------------------
 // Statistics
 // ---------------------------------------------------------------------------
-Route::get('/statistics', function () {
-    return view('statistics.statistics');
-})->name('statistics');
+Route::get('/statistics', [StatRepsController::class, 'index'])->name('statistics');
 
 // ---------------------------------------------------------------------------
 // Category Management (Admin / Super Admin)
