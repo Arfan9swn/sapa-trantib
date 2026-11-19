@@ -13,29 +13,41 @@
                 <p class="text-white/80 text-sm">Silahkan cari laporan yang ada...</p>
             </div>
 
-            <!-- Search Bar -->
-            <div class="flex gap-2 mb-6">
-                <div class="flex-1 relative">
-                    <input type="text" placeholder="Cari laporan yang ada..." class="w-full pl-10 pr-10 py-3 rounded-xl bg-white border border-white/30 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all">
-                    <div class="absolute left-3 top-1/2 -translate-y-1/2 text-white/60">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
+            <!-- Filter Form -->
+            <form method="GET" class="flex flex-row sm:flex-row gap-4 mb-6 max-w-2xl">
+                <div class="flex-1 sm:flex-1">
+                    <select name="status" class="block w-full rounded-xl border border-green-500 bg-green-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
+                        <option value="" {{ $status == '' ? 'selected' : '' }}>Semua Status</option>
+                        <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="denied" {{ $status == 'denied' ? 'selected' : '' }}>Ditolak</option>
+                        <option value="complete" {{ $status == 'complete' ? 'selected' : '' }}>Selesai</option>
+                    </select>
                 </div>
-                <button class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-6 py-3 rounded-xl font-medium transition-colors border border-[#4a6a56]">Cari</button>
-            </div>
-
-            <!-- Filter Pills -->
-            <div class="flex gap-3 mb-4">
-                <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-[#4a6a56]">Kategori</span>
-                <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-[#4a6a56]">Sub kategori</span>
-            </div>
-
-            <!-- Status Pills -->
-            <div class="flex gap-3 mb-8 overflow-x-auto pb-2">
-                <span class="bg-[#d97706] text-white px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-[#d97706]">Pending</span>
-                <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-[#4a6a56]">Bencana alam</span>
-                <span class="bg-[#3d5c4c] text-white px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-[#4a6a56]">Banjar banding</span>
-            </div>
+                <div class="flex-1 sm:flex-1">
+                    <select name="category_id" class="block w-full rounded-xl border border-green-500 bg-green-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
+                        <option value="" {{ $categoryId == '' ? 'selected' : '' }}>Semua Kategori</option>
+                        @foreach($categories as $cat)
+                        <option value="{{ $cat->category_id }}" {{ $categoryId == $cat->category_id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1 sm:flex-1">
+                    <select name="sub_category_id" class="block w-full rounded-xl border border-green-500 bg-green-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
+                        <option value="" {{ $subCategoryId == '' ? 'selected' : '' }}>Semua Sub-Kategori</option>
+                        @foreach($categories as $cat)
+                        @foreach($cat->subCategories as $sc)
+                        <option value="{{ $sc->sub_category_id }}" {{ $subCategoryId == $sc->sub_category_id ? 'selected' : '' }}>{{ $sc->name }}</option>
+                        @endforeach
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1 sm:flex-1">
+                    <input type="text" name="search" placeholder="Cari laporan..." class="block w-full rounded-xl border border-green-500 bg-green-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" value="{{ $search ?? '' }}">
+                </div>
+                <button type="submit" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-6 py-3 rounded-xl font-medium transition-colors">
+                    Cari
+                </button>
+            </form>
 
             <!-- Reports Grid -->
             <div class="space-y-4">

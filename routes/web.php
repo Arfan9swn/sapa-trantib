@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\Reps;
 use App\Models\RepsComment;
 use App\Models\OtpVerification;
+use App\Models\Cat;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 use App\Http\Controllers\RTController;
@@ -207,10 +208,36 @@ Route::get('/reports', function (Request $request) {
 
 Route::get('/reports/create', [App\Http\Controllers\ReportsController::class, 'create'])->name('reports.create');
 
-Route::get('/reports/admin', function () {
-    $reports = Reps::with('category', 'subCategory', 'comments', 'media')
-        ->latest()->get();
-    return view('reports.admin-report', compact('reports'));
+Route::get('/reports/admin', function (Request $request) {
+    $status = $request->query('status');
+    $categoryId = $request->query('category_id');
+    $subCategoryId = $request->query('sub_category_id');
+    $search = $request->query('search');
+
+    $query = Reps::with('category', 'subCategory', 'comments', 'media');
+
+    if ($status) {
+        $query->where('status', $status);
+    }
+
+    if ($categoryId) {
+        $query->where('category_id', $categoryId);
+    }
+
+    if ($subCategoryId) {
+        $query->where('sub_category_id', $subCategoryId);
+    }
+
+    if ($search) {
+        $query->where('title', 'like', '%'.$search.'%')
+            ->orWhere('description', 'like', '%'.$search.'%');
+    }
+
+    $reports = $query->latest()->get();
+
+    $categories = Cat::all();
+
+    return view('reports.admin-report', compact('reports', 'categories', 'status', 'categoryId', 'subCategoryId', 'search'));
 })->name('reports.admin');
 
 Route::get('/reports/{report}', function ($report) {
