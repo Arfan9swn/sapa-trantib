@@ -20,9 +20,9 @@
             </div>
 
             <!-- Filter Form -->
-            <form method="GET" class="flex flex-row sm:flex-row gap-4 mb-6 max-w-2xl">
+            <form method="GET" class="flex flex-row sm:flex-row gap-4 mb-6">
                 <div class="flex-1 sm:flex-1">
-                    <select name="status" class="block w-full rounded-xl border border-green-500 bg-green-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
+                    <select name="status" class="block w-full rounded-xl bg-[#3d5c4c] hover:bg-[#4a6a56] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
                         <option value="" {{ $request->status == '' ? 'selected' : '' }}>Semua Status</option>
                         <option value="pending" {{ $request->status == 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="denied" {{ $request->status == 'denied' ? 'selected' : '' }}>Ditolak</option>
@@ -30,7 +30,7 @@
                     </select>
                 </div>
                 <div class="flex-1 sm:flex-1">
-                    <select name="category_id" class="block w-full rounded-xl border border-green-500 bg-green-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" on="change-category">
+                    <select name="category_id" class="block w-full rounded-xl bg-[#3d5c4c] hover:bg-[#4a6a56] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" on="change-category">
                         <option value="" {{ $request->category_id == '' ? 'selected' : '' }}>Semua Kategori</option>
                         @foreach($categories as $cat)
                         <option value="{{ $cat->category_id }}" {{ $request->category_id == $cat->category_id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -38,7 +38,7 @@
                     </select>
                 </div>
                 <div class="flex-1 sm:flex-1">
-                    <select name="sub_category_id" class="block w-full rounded-xl border border-green-500 bg-green-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" id="subCategoryFilter">
+                    <select name="sub_category_id" class="block w-full rounded-xl bg-[#3d5c4c] hover:bg-[#4a6a56] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" id="subCategoryFilter">
                         <option value="" {{ $request->sub_category_id == '' ? 'selected' : '' }}>Semua Sub-Kategori</option>
                         @foreach($subCategories as $sc)
                         <option value="{{ $sc->sub_category_id }}" {{ $request->sub_category_id == $sc->sub_category_id ? 'selected' : '' }}>{{ $sc->name }}</option>
@@ -46,9 +46,9 @@
                     </select>
                 </div>
                 <div class="flex-1 sm:flex-1">
-                    <input type="text" name="search" placeholder="Cari laporan..." class="block w-full rounded-xl border border-green-500 bg-green-800 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" value="{{ $request->search ?? '' }}">
+                    <input type="text" name="search" placeholder="Cari laporan..." class="block w-full rounded-xl bg-[#3d5c4c] hover:bg-[#4a6a56]  px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" value="{{ $request->search ?? '' }}">
                 </div>
-                <button type="submit" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-6 py-3 rounded-xl font-medium transition-colors border border-[#4a6a56]">Filter</button>
+                <button type="submit" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-3 py-2 rounded-xl font-medium transition-colors border border-[#4a6a56]">Filter</button>
             </form>
 
             <!-- Subcategory AJAX script -->
