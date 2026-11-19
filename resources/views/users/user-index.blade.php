@@ -107,6 +107,30 @@
                     </tbody>
                 </table>
             </div>
+            <style>
+                nav[aria-label="Pagination Navigation"] a.inline-flex,
+                nav[aria-label="Pagination Navigation"] span.inline-flex {
+                    background: #1a3326 !important;
+                    border: 1px solid #4a6a56 !important;
+                    color: #8fd89b !important;
+                }
+                nav[aria-label="Pagination Navigation"] a.inline-flex:hover:not(.cursor-not-allowed) {
+                    background: #4a6a56 !important;
+                    color: #fff !important;
+                    border-color: #4a6a56 !important;
+                }
+                nav[aria-label="Pagination Navigation"] span[aria-current="page"],
+                nav[aria-label="Pagination Navigation"] .bg-gray-200 {
+                    background: #10b981 !important;
+                    border-color: #10b981 !important;
+                    color: #fff !important;
+                }
+                nav[aria-label="Pagination Navigation"] .cursor-not-allowed {
+                    color: #6b7a70 !important;
+                    border-color: #4a6a56 !important;
+                    opacity: 0.6;
+                }
+            </style>
             {{ $users->links() }}
         </div>
     </div>
