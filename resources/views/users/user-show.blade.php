@@ -12,7 +12,7 @@
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+    <div class="flex flex-col lg:flex-row lg:justify-between gap-4 mb-8">
         <div>
             <h1 class="text-2xl font-bold text-white">Detail pengguna</h1>
             <p class="text-white/60 text-sm">Detail akun pengguna</p>
