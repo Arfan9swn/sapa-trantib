@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserTag;
 use App\Mail\OtpMail;
 use App\Models\OtpVerification;
 use Illuminate\Http\Request;
@@ -27,6 +28,18 @@ class AdminRegisterController extends Controller
             'role' => 'admin',
             'email_verified_at' => null,
         ]);
+
+        // Assign "admin" user type immediately
+        $adminTag = UserTag::where('name', 'admin')->first();
+        if (!$adminTag) {
+            $adminTag = UserTag::create([
+                'name' => 'admin',
+                'color' => '#3d5c4c',
+            ]);
+        }
+        $user->user_type = 'admin';
+        $user->user_type_color = '#3d5c4c';
+        $user->save();
 
         // Send OTP for email confirmation
         $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);

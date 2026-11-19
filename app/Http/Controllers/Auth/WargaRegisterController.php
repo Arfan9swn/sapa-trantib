@@ -32,10 +32,13 @@ class WargaRegisterController extends Controller
             'phone_number'  => 'required|string|max:25|unique:users,phone_number',
         ]);
 
+        // Generate username from full name (replace spaces with underscores, lowercase)
+        $username = strtolower(str_replace(' ', '_', $validated['full_name']));
+
         $user = User::create([
             'full_name'      => $validated['full_name'],
             'phone_number'   => $validated['phone_number'],
-            'username'       => 'warga_' . $validated['phone_number'],
+            'username'       => $username,
             'email'          => null,
             'password_hash'  => null,
             'role'           => 'warga',
