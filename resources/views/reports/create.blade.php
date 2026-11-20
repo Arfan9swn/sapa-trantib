@@ -8,76 +8,76 @@
                 <h2 class="text-xl font-bold text-white mb-1">Kirim Laporan</h2>
                 <p class="text-emerald-200 text-sm">Silahkan lengkapi form berikut untuk mengirim laporan.</p>
             </div>
-            
+
+            @if ($errors->any())
+                <div class="mb-4 p-4 rounded-lg bg-red-900/60 border border-red-400 text-red-100 text-sm">
+                    <ul class="list-disc list-inside space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('warga.reports.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                
+
                 <div class="mb-4">
                     <label for="title" class="block text-white font-medium text-sm mb-2">Judul laporan</label>
-                    <input type="text" name="title" id="title" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan judul laporan..." required>
+                    <input type="text" name="title" id="title" value="{{ old('title') }}" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan judul laporan..." required>
                 </div>
-                
+
                 <div class="mb-4">
                     <label for="description" class="block text-white font-medium text-sm mb-2">Isi laporan</label>
-                    <textarea name="description" id="description" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan isi laporan..." rows="4" required></textarea>
+                    <textarea name="description" id="description" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan isi laporan..." rows="4" required>{{ old('description') }}</textarea>
                 </div>
 
                 <div class="mb-4">
                     <label for="reporter_location" class="block text-white font-medium text-sm mb-2">Lokasi</label>
                     <div class="flex items-center gap-2">
-                        <input type="text" name="reporter_location" id="reporter_location" value="{{ session('reporter_location', '') }}" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan lokasi laporan...">
+                        <input type="text" name="reporter_location" id="reporter_location" value="{{ old('reporter_location', session('reporter_location', '')) }}" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" placeholder="Masukan lokasi laporan...">
                     </div>
-                <!-- Hidden fields for GPS coordinates -->
-                <input type="hidden" name="latitude" id="latitude" value="">
-                <input type="hidden" name="longitude" id="longitude" value="">
+                    <!-- Hidden fields for GPS coordinates -->
+                    <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude', '') }}">
+                    <input type="hidden" name="longitude" id="longitude" value="{{ old('longitude', '') }}">
                 </div>
+
                 <script>
-    // GPS Capture - Show coordinates above location input
-    document.addEventListener('DOMContentLoaded', function() {
-        if (!navigator.geolocation) {
-            return;
-        }
-        
-        // Request GPS location
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-                var latDisplay = lat.toFixed(6);
-                var lngDisplay = lng.toFixed(6);
-                
-                // Set hidden fields for database storage
-                document.getElementById('latitude').value = latDisplay;
-                document.getElementById('longitude').value = lngDisplay;
-                
-                // Create coordinate display element
-                var coordsDiv = document.createElement('div');
-                coordsDiv.style.cssText = 'background: #10b981; color: white; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.875rem;';
-                coordsDiv.innerHTML = 'Koordinat GPS Terkapture: ' + latDisplay + ', ' + lngDisplay;
-                
-                // Insert above the location input field (before the flex gap-2 div)
-                var locGroup = document.querySelector('div.flex.items-center.gap-2');
-                if (locGroup && locGroup.parentNode) {
-                    locGroup.parentNode.insertBefore(coordsDiv, locGroup);
-                } else {
-                    // Fallback: find the mb-4 div
-                    var mb4 = document.querySelector('div.mb-4');
-                    if (mb4) {
-                        mb4.parentNode.insertBefore(coordsDiv, mb4);
-                    }
-                }
-            },
-            function(error) {
-                // Keep the location input available for manual entry
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
-        );
-    });
-</script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (!navigator.geolocation) {
+                            return;
+                        }
+
+                        navigator.geolocation.getCurrentPosition(
+                            function(position) {
+                                var lat = position.coords.latitude;
+                                var lng = position.coords.longitude;
+                                var latDisplay = lat.toFixed(6);
+                                var lngDisplay = lng.toFixed(6);
+
+                                document.getElementById('latitude').value = latDisplay;
+                                document.getElementById('longitude').value = lngDisplay;
+
+                                var coordsDiv = document.createElement('div');
+                                coordsDiv.style.cssText = 'background: #10b981; color: white; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.875rem;';
+                                coordsDiv.innerHTML = 'Koordinat GPS Terkapture: ' + latDisplay + ', ' + lngDisplay;
+
+                                var locGroup = document.querySelector('div.flex.items-center.gap-2');
+                                if (locGroup && locGroup.parentNode) {
+                                    locGroup.parentNode.insertBefore(coordsDiv, locGroup);
+                                }
+                            },
+                            function(error) {
+                                // Biarkan input lokasi manual tetap bisa dipakai
+                            },
+                            {
+                                enableHighAccuracy: true,
+                                timeout: 10000,
+                                maximumAge: 0
+                            }
+                        );
+                    });
+                </script>
 
                 <div class="grid grid-cols-3 gap-4 mb-4">
                     <div>
@@ -88,7 +88,9 @@
                                 $rts = App\Models\RT::orderBy('rt_number')->get();
                             @endphp
                             @foreach ($rts as $rt)
-                                <option value="{{ $rt->rt_number }}">{{ $rt->rt_number }} - Kepala: {{ $rt->head_name }}</option>
+                                <option value="{{ $rt->rt_number }}" {{ old('reporter_rt') == $rt->rt_number ? 'selected' : '' }}>
+                                    {{ $rt->rt_number }} - Kepala: {{ $rt->head_name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -97,21 +99,27 @@
                         <select name="category_id" id="category_id" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" required>
                             <option value="">Pilih Kategori...</option>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->category_id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->category_id }}" {{ old('category_id') == $category->category_id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label for="sub_category_id" class="block text-white font-medium text-sm mb-2">Subkategori</label>
-                        <select name="sub_category_id" id="sub_category_id" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all" required>
+                        <label for="sub_category_id" class="block text-white font-medium text-sm mb-2">
+                            Subkategori <span class="text-emerald-200/70 text-xs font-normal">(Opsional)</span>
+                        </label>
+                        <select name="sub_category_id" id="sub_category_id" class="w-full px-4 py-3 bg-[#1a3326] border border-[#4a6a56] rounded-lg text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all">
                             <option value="">Pilih Subkategori...</option>
                             @foreach ($subCategories as $subCategory)
-                                <option value="{{ $subCategory->sub_category_id }}">{{ $subCategory->name }}</option>
+                                <option value="{{ $subCategory->sub_category_id }}" {{ old('sub_category_id') == $subCategory->sub_category_id ? 'selected' : '' }}>
+                                    {{ $subCategory->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="mb-6">
                     <label for="image" class="block text-white font-medium text-sm mb-2">Lampirkan foto</label>
                     <div class="w-full bg-[#1a3326] border-2 border-dashed border-[#4a6a56] rounded-lg px-6 py-4 text-center text-gray-400 hover:border-emerald-500 hover:text-white transition-all cursor-pointer group" id="imageDropZone">
@@ -122,15 +130,15 @@
                     </div>
                     <input type="file" name="image" id="image" class="hidden" accept="image/*">
                 </div>
-                
+
                 <button type="submit" class="w-full bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-emerald-700 transition-all flex items-center justify-center gap-2">
                     Kirim Laporan
                 </button>
             </form>
         </div>
-        
+
         <div class="mt-6 flex justify-end">
-            <a href="{{ route('reports.admin') }}" class="bg-[#a63d3d] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#8f3333] transition-all">← Kembali ke daftar</a>
+            <a href="{{ route('reports.index') }}" class="bg-[#a63d3d] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#8f3333] transition-all">← Kembali ke daftar</a>
         </div>
     </div>
 </div>
@@ -160,7 +168,6 @@
         const imageInput = document.getElementById('image');
         const imageDropZone = document.getElementById('imageDropZone');
 
-        // Subcategory AJAX loading
         categorySelect.addEventListener('change', function() {
             const categoryId = this.value;
 
@@ -169,13 +176,19 @@
 
             if (!categoryId) {
                 subCategorySelect.innerHTML = '<option value="">Pilih Subkategori...</option>';
-                subCategorySelect.disabled = true;
+                subCategorySelect.disabled = false;
                 return;
             }
 
             fetch('{{ route('api.subcategories') }}?category_id=' + categoryId)
                 .then(response => response.json())
                 .then(data => {
+                    if (!Array.isArray(data) || data.length === 0) {
+                        subCategorySelect.innerHTML = '<option value="">Tidak ada subkategori (opsional)</option>';
+                        subCategorySelect.disabled = false;
+                        return;
+                    }
+
                     subCategorySelect.innerHTML = '<option value="">Pilih Subkategori...</option>';
                     data.forEach(function(sub) {
                         const option = document.createElement('option');
@@ -187,12 +200,11 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    subCategorySelect.innerHTML = '<option value="">Gagal memuat subkategori</option>';
+                    subCategorySelect.innerHTML = '<option value="">Pilih Subkategori (opsional)...</option>';
                     subCategorySelect.disabled = false;
                 });
         });
 
-        // Image upload click handler
         imageDropZone.addEventListener('click', function() {
             imageInput.click();
         });
@@ -223,31 +235,18 @@
         };
     });
 
-    // GPS Capture - Simple Console Logging
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             function(position) {
                 var lat = position.coords.latitude;
                 var lng = position.coords.longitude;
-                console.log('GPS SUCCESS - Latitude:', lat.toFixed(6), 'Longitude:', lng.toFixed(6));
-                console.log('GPS Coordinates captured - Lat: ' + lat.toFixed(6) + ', Lng: ' + lng.toFixed(6));
-                
-                // Set hidden fields for database storage
+
                 document.getElementById('latitude').value = lat.toFixed(6);
                 document.getElementById('longitude').value = lng.toFixed(6);
-                
-                // Show modal with coordinates
+
                 openGpsModal(lat.toFixed(6), lng.toFixed(6));
             },
             function(error) {
-                console.log('GPS ERROR -', error.code, error.message);
-                if (error.code === 1) {
-                    console.log('GPS: Permission denied by user');
-                } else if (error.code === 2) {
-                    console.log('GPS: Position unavailable');
-                } else if (error.code === 3) {
-                    console.log('GPS: Timeout');
-                }
                 openGpsErrorModal(error.message);
             },
             {
@@ -256,31 +255,26 @@
                 maximumAge: 0
             }
         );
-    } else {
-        console.log('GPS: Browser does not support geolocation');
     }
-    
-    // GPS Modal Functions
+
     function openGpsModal(lat, lng) {
         document.getElementById('gpsModalTitle').textContent = 'Lokasi GPS Ditangkap';
         document.getElementById('gpsModalMessage').textContent = 'Koordinat: ' + lat + ', ' + lng;
         document.getElementById('gpsModal').classList.remove('hidden');
     }
-    
+
     function openGpsErrorModal(message) {
         document.getElementById('gpsModalTitle').textContent = 'GPS Error';
         document.getElementById('gpsModalMessage').textContent = message;
         document.getElementById('gpsModalMessage').className = 'text-red-300 text-sm';
         document.getElementById('gpsModal').classList.remove('hidden');
     }
-    
+
     function closeGpsModal() {
         document.getElementById('gpsModal').classList.add('hidden');
-        // Reset message class
         document.getElementById('gpsModalMessage').className = 'text-emerald-200 text-sm';
     }
-    
-    // Close modal on Escape key
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeGpsModal();
@@ -289,4 +283,3 @@
 </script>
 @endpush
 @endsection
- 

@@ -17,26 +17,26 @@
             <form method="GET" class="flex flex-row sm:flex-row gap-4 mb-6">
                 <div class="flex-1 sm:flex-1">
                     <select name="status" class="block w-full rounded-xl px-3 py-2 text-white bg-[#3d5c4c] hover:bg-[#4a6a56] focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
-                        <option value="" {{ $status == '' ? 'selected' : '' }}>Semua Status</option>
-                        <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="denied" {{ $status == 'denied' ? 'selected' : '' }}>Ditolak</option>
-                        <option value="complete" {{ $status == 'complete' ? 'selected' : '' }}>Selesai</option>
+                        <option value="" {{ ($status ?? '') == '' ? 'selected' : '' }}>Semua Status</option>
+                        <option value="pending" {{ ($status ?? '') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="rejected" {{ ($status ?? '') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                        <option value="resolved" {{ ($status ?? '') == 'resolved' ? 'selected' : '' }}>Selesai</option>
                     </select>
                 </div>
                 <div class="flex-1 sm:flex-1">
                     <select name="category_id" class="block w-full rounded-xl px-3 py-2 text-white bg-[#3d5c4c] hover:bg-[#4a6a56] focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
-                        <option value="" {{ $categoryId == '' ? 'selected' : '' }}>Semua Kategori</option>
+                        <option value="" {{ ($categoryId ?? '') == '' ? 'selected' : '' }}>Semua Kategori</option>
                         @foreach($categories as $cat)
-                        <option value="{{ $cat->category_id }}" {{ $categoryId == $cat->category_id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        <option value="{{ $cat->category_id }}" {{ ($categoryId ?? '') == $cat->category_id ? 'selected' : '' }}>{{ $cat->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="flex-1 sm:flex-1">
                     <select name="sub_category_id" class="block w-full rounded-xl bg-[#3d5c4c] hover:bg-[#4a6a56] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
-                        <option value="" {{ $subCategoryId == '' ? 'selected' : '' }}>Semua Sub-Kategori</option>
+                        <option value="" {{ ($subCategoryId ?? '') == '' ? 'selected' : '' }}>Semua Sub-Kategori</option>
                         @foreach($categories as $cat)
                         @foreach($cat->subCategories as $sc)
-                        <option value="{{ $sc->sub_category_id }}" {{ $subCategoryId == $sc->sub_category_id ? 'selected' : '' }}>{{ $sc->name }}</option>
+                        <option value="{{ $sc->sub_category_id }}" {{ ($subCategoryId ?? '') == $sc->sub_category_id ? 'selected' : '' }}>{{ $sc->name }}</option>
                         @endforeach
                         @endforeach
                     </select>
@@ -79,13 +79,13 @@
                                         $rStatusLabel = match($rStatus) {
                                             'pending' => 'Pending',
                                             'rejected' => 'Ditolak',
-                                            'done' => 'Selesai',
+                                            'resolved' => 'Selesai',
                                             default => ucfirst($rStatus),
                                         };
                                         $rStatusColor = match($rStatus) {
                                             'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-500',
                                             'rejected' => 'bg-red-100 text-red-800 border-red-500',
-                                            'done' => 'bg-blue-100 text-blue-800 border-blue-500',
+                                            'resolved' => 'bg-blue-100 text-blue-800 border-blue-500',
                                             default => 'bg-[#3d5c4c] text-white border-[#4a6a56]',
                                         };
                                     @endphp
@@ -98,7 +98,7 @@
                                         <select name="status" onchange="this.form.submit()" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-4 py-4 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors border border-[#4a6a56]">
                                             <option value="pending" {{ $rStatus == 'pending' ? 'selected' : '' }}>Pending</option>
                                             <option value="rejected" {{ $rStatus == 'rejected' ? 'selected' : '' }}>Ditolak</option>
-                                            <option value="done" {{ $rStatus == 'done' ? 'selected' : '' }}>Selesai</option>
+                                            <option value="resolved" {{ $rStatus == 'resolved' ? 'selected' : '' }}>Selesai</option>
                                         </select>
                                     </form>
 
