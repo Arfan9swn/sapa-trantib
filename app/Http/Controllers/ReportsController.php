@@ -190,7 +190,7 @@ class ReportsController extends Controller
                 'status'         => 'pending',
             ]);
 
-            return redirect()->route('reports.index')
+            return redirect()->route('warga.reports.new-residence.index')
                 ->with('success', 'Laporan penduduk baru berhasil dibuat.');
         } catch (\Exception $e) {
             \Log::error('newResidenceStore error: ' . $e->getMessage(), ['exception' => $e]);
@@ -199,6 +199,43 @@ class ReportsController extends Controller
                 ->withErrors(['report' => 'Gagal menyimpan laporan: ' . $e->getMessage()])
                 ->withInput();
         }
+    }
+
+    /** Index: list new residence reports (admin sees all, warga sees own only). */
+    public function newResidenceIndex(Request $request)
+    {
+        $userRole = session('auth_user_role') ?? '';
+        $isAdmin = in_array(strtolower($userRole), ['admin', 'super_admin']);
+
+        $query = NewResidenceReport::with('user');
+
+        // Warga users see only their own reports
+        if (!$isAdmin) {
+            $query->where('user_id', session('auth_user_id'));
+        }
+
+        // Status-only filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $reports = $query->latest()->paginate(15)->withQueryString();
+
+        return view('reports.new-residence-index', compact('reports', 'request', 'isAdmin'));
+    }
+
+    /** Delete a new residence report (admin only). */
+    public function newResidenceDestroy($id)
+    {
+        $userRole = session('auth_user_role') ?? '';
+        if (!in_array(strtolower($userRole), ['admin', 'super_admin'], true)) {
+            return back()->with('error', 'Hanya admin yang dapat menghapus laporan penduduk baru.');
+        }
+
+        $report = NewResidenceReport::findOrFail($id);
+        $report->delete();
+
+        return back()->with('success', 'Laporan penduduk baru berhasil dihapus.');
     }
 
     /** Update report status (admin/super_admin only). */
