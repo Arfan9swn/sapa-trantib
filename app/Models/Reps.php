@@ -16,7 +16,7 @@ class Reps extends Model
 
     protected $table = 'reports';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     #[Fillable([
         'reference_code', 'title', 'description', 'category_id', 'sub_category_id',
@@ -35,8 +35,8 @@ class Reps extends Model
     {
         return [
             'status' => 'string',
-            'latitude' => 'decimal',
-            'longitude' => 'decimal',
+            'latitude' => 'decimal:6',
+            'longitude' => 'decimal:6',
             'boosts' => 'integer',
             'submitted_at' => 'datetime',
             'resolved_at' => 'datetime',

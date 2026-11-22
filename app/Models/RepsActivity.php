@@ -31,4 +31,13 @@ class RepsActivity extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
+
+    /**
+     * The "route key" used for implicit route model binding.
+     * The table's primary key is activity_id (not "id").
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'activity_id';
+    }
 }

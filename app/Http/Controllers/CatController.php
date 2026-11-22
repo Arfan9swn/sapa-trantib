@@ -32,7 +32,7 @@ class CatController extends Controller
     public function update(Request $request, Cat $category): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:50|unique:categories,name,' . $category->category_id,
+            'name' => 'sometimes|string|max:50|unique:categories,name,' . $category->category_id . ',category_id',
         ]);
 
         $category->update($validated);

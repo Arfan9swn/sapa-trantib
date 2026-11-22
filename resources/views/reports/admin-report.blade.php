@@ -1,7 +1,124 @@
 @extends('layout.app')
 
-<html>
-    <div class="bg-red-400">
-        test
+@section('title', 'List Laporan - SapaTrantib')
+
+@section('content')
+<div class="min-h-screen w-full relative overflow-hidden flex">
+    <!-- Main Content -->
+    <div class="flex-1 p-8 md:p-16 bg-[#1a3326] min-h-screen">
+        <div class="max-w-5xl mx-auto">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold text-white mb-1">List laporan</h1>
+                <p class="text-white/80 text-sm">Silahkan cari laporan yang ada...</p>
+            </div>
+
+            <!-- Filter Form -->
+            <form method="GET" class="flex flex-row sm:flex-row gap-4 mb-6">
+                <div class="flex-1 sm:flex-1">
+                    <select name="status" class="block w-full rounded-xl px-3 py-2 text-white bg-[#3d5c4c] hover:bg-[#4a6a56] focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
+                        <option value="" {{ ($status ?? '') == '' ? 'selected' : '' }}>Semua Status</option>
+                        <option value="pending" {{ ($status ?? '') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="rejected" {{ ($status ?? '') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                        <option value="resolved" {{ ($status ?? '') == 'resolved' ? 'selected' : '' }}>Selesai</option>
+                    </select>
+                </div>
+                <div class="flex-1 sm:flex-1">
+                    <select name="category_id" class="block w-full rounded-xl px-3 py-2 text-white bg-[#3d5c4c] hover:bg-[#4a6a56] focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
+                        <option value="" {{ ($categoryId ?? '') == '' ? 'selected' : '' }}>Semua Kategori</option>
+                        @foreach($categories as $cat)
+                        <option value="{{ $cat->category_id }}" {{ ($categoryId ?? '') == $cat->category_id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1 sm:flex-1">
+                    <select name="sub_category_id" class="block w-full rounded-xl bg-[#3d5c4c] hover:bg-[#4a6a56] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none">
+                        <option value="" {{ ($subCategoryId ?? '') == '' ? 'selected' : '' }}>Semua Sub-Kategori</option>
+                        @foreach($categories as $cat)
+                        @foreach($cat->subCategories as $sc)
+                        <option value="{{ $sc->sub_category_id }}" {{ ($subCategoryId ?? '') == $sc->sub_category_id ? 'selected' : '' }}>{{ $sc->name }}</option>
+                        @endforeach
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1 sm:flex-1">
+                    <input type="text" name="search" placeholder="Cari laporan..." class="block w-full rounded-xl px-3 py-2 text-white bg-[#3d5c4c] hover:bg-[#4a6a56] focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none" value="{{ $search ?? '' }}">
+                </div>
+                <button type="submit" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-3 py-2 rounded-xl transition-colors">
+                    Cari
+                </button>
+            </form>
+
+            <!-- Reports Grid -->
+            <div class="space-y-4">
+                @forelse($reports as $report)
+                <div class="rounded-2xl shadow-sm border border-white/20 overflow-hidden">
+                    <div class="flex flex-col md:flex-row">
+                        <!-- Thumbnail -->
+                        <div class="w-full md:w-48 h-48 md:h-auto bg-[#2d4a3a] flex items-center justify-center overflow-hidden">
+                            @if($report->media->isNotEmpty())
+                                <img src="{{ asset('storage/' . $report->media->first()->media_url) }}" class="w-full h-full object-cover" alt="{{ $report->title }}">
+                            @else
+                                <svg class="w-12 h-12 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path></svg>
+                            @endif
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-6 flex-1">
+                            <h3 class="text-xl font-bold text-white mb-2">{{ $report->title }}</h3>
+                            <p class="text-white/70 text-sm mb-4 line-clamp-3">{{ $report->description }}</p>
+
+                            <div class="flex items-center gap-2 mb-4 text-sm text-white/70 mt-2">
+                                <span>{{ \Illuminate\Support\Carbon::parse($report->submitted_at)->format('d F Y H:i') }}</span>
+                            </div>
+
+                            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                                <div class="flex gap-4">
+                                    @php
+                                        $rStatus = $report->status ?? 'pending';
+                                        $rStatusLabel = match($rStatus) {
+                                            'pending' => 'Pending',
+                                            'rejected' => 'Ditolak',
+                                            'resolved' => 'Selesai',
+                                            default => ucfirst($rStatus),
+                                        };
+                                        $rStatusColor = match($rStatus) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-500',
+                                            'rejected' => 'bg-red-100 text-red-800 border-red-500',
+                                            'resolved' => 'bg-blue-100 text-blue-800 border-blue-500',
+                                            default => 'bg-[#3d5c4c] text-white border-[#4a6a56]',
+                                        };
+                                    @endphp
+                                    <a href="{{ route('reports.show', $report->report_id) }}" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors border border-[#4a6a56]">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        Lihat
+                                    </a>
+                                    <form action="{{ route('reports.status.update', $report->report_id) }}" method="POST" class="inline">
+                                        @csrf
+                                        <select name="status" onchange="this.form.submit()" class="bg-[#3d5c4c] hover:bg-[#4a6a56] text-white px-4 py-4 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors border border-[#4a6a56]">
+                                            <option value="pending" {{ $rStatus == 'pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="rejected" {{ $rStatus == 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                                            <option value="resolved" {{ $rStatus == 'resolved' ? 'selected' : '' }}>Selesai</option>
+                                        </select>
+                                    </form>
+
+                                    <form action="{{ route('reports.destroy', $report->report_id) }}" method="POST" class="inline">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="bg-[#a63d3d] hover:bg-[#8f3333] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-[#c96b6b]">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center py-12"><p class="text-white/50">Belum ada laporan.</p></div>
+                @endforelse
+            </div>
+        </div>
     </div>
-</html>
+</div>
+@endsection

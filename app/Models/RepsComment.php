@@ -13,14 +13,21 @@ class RepsComment extends Model
 
     protected $primaryKey = 'comment_id';
 
+    protected $table = 'report_comments';
+
     public $timestamps = false;
 
-    #[Fillable(['report_id', 'body', 'created_at'])]
-    protected $fillable = ['report_id', 'body', 'created_at'];
+    #[Fillable(['report_id', 'body', 'created_at', 'user_id'])]
+    protected $fillable = ['report_id', 'body', 'created_at', 'user_id'];
 
     
     public function report(): BelongsTo
     {
         return $this->belongsTo(Reps::class, 'report_id', 'report_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 }

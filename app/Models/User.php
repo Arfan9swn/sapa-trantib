@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['username', 'email', 'password_hash', 'role'])]
+#[Fillable(['username', 'email', 'password_hash', 'role', 'email_verified_at', 'user_type', 'user_type_color', 'full_name', 'phone_number'])]
 #[Hidden(['password_hash', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -33,6 +33,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
+            'user_type' => 'string',
+            'user_type_color' => 'string',
         ];
     }
 
@@ -45,11 +47,19 @@ class User extends Authenticatable
     }
 
     /**
+     * Helper untuk mengecek apakah user adalah Admin atau Super Admin.
+     */
+    public function isAdmin(): bool
+    {
+        return in_array(strtolower($this->role), ['admin', 'super_admin']);
+    }
+
+    /**
      * Get the reports assigned to this user.
      */
     public function assignedReports(): HasMany
     {
-        return $this->hasMany(Report::class, 'assigned_to', 'user_id');
+        return $this->hasMany(Reps::class, 'assigned_to', 'user_id');
     }
 
     /**
@@ -57,6 +67,6 @@ class User extends Authenticatable
      */
     public function activities(): HasMany
     {
-        return $this->hasMany(ReportActivity::class, 'user_id', 'user_id');
+        return $this->hasMany(RepsActivity::class, 'user_id', 'user_id');
     }
 }

@@ -16,8 +16,8 @@ class OtpVerification extends Model
 
     public $timestamps = false;
 
-    #[Fillable(['email', 'otp_code', 'expires_at', 'used_at'])]
-    protected $fillable = ['email', 'otp_code', 'expires_at', 'used_at'];
+    #[Fillable(['email', 'otp_code', 'expires_at', 'used_at', 'created_at'])]
+    protected $fillable = ['email', 'otp_code', 'expires_at', 'used_at', 'created_at'];
 
     protected function casts(): array
     {

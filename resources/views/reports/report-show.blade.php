@@ -1,7 +1,154 @@
 @extends('layout.app')
 
-<html>
-    <div class="bg-red-400">
-        test
+@section('title', 'Detail Laporan - SapaTrantib')
+
+@section('content')
+<div class="min-h-screen w-full relative overflow-hidden flex">
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8 md:p-16 bg-[#1a3326] min-h-screen">
+        <div class="max-w-4xl mx-auto">
+            <!-- Back button -->
+            <div class="flex items-center gap-2 mb-8">
+                <a href="{{ route('reports.index') }}" class="flex items-center gap-2 text-white/70 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Kembali
+                </a>
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-3xl font-bold text-white mb-6">{{ $report->title }}</h1>
+
+            <!-- Status Pills -->
+            <div class="flex gap-3 mb-8">
+                @php
+                    $status = $report->status ?? 'pending';
+                    $statusBg = match($status) {
+                        'pending' => 'bg-yellow-100 text-yellow-800',
+                        'rejected' => 'bg-red-100 text-red-800',
+                        'resolved' => 'bg-blue-100 text-blue-800',
+                        default => 'bg-[#3d5c4c] text-white',
+                    };
+                    $statusBorder = match($status) {
+                        'pending' => 'border-yellow-500',
+                        'rejected' => 'border-red-500',
+                        'resolved' => 'border-blue-500',
+                        default => 'border-[#4a6a56]',
+                    };
+                @endphp
+                <span class="flex items-center rounded-full px-3 py-1.5 text-sm font-medium {{ $statusBg }} {{ $statusBorder }}">{{ ucfirst($status) }}</span>
+                
+                <!-- Category & Subcategory Pills -->
+                @if($report->category || $report->subCategory)
+                <div class="flex gap-3">
+                    @if($report->category)
+                    <span class="bg-[#3d5c4c] flex items-center rounded-full px-3 py-1.5 text-sm font-medium border border-[#4a6a56]">{{ $report->category->name }}</span>
+                    @endif
+                    @if($report->subCategory)
+                    <span class="bg-[#3d5c4c] flex items-center rounded-full px-3 py-1.5 text-sm font-medium border border-[#4a6a56]">{{ $report->subCategory->name }}</span>
+                    @endif
+                </div>
+                @endif
+            </div>
+
+            <!-- Main Image Area -->
+            <div class="w-fit max-w-full mx-auto relative overflow-hidden rounded-2xl bg-[#2d4a3a]">
+                <!-- Report Images -->
+                @if($report->media->isNotEmpty())
+                <div class="flex flex-wrap gap-2">
+                    @foreach($report->media as $media)
+                    <div class="w-auto flex-shrink-0 rounded-lg overflow-hidden border border-[#4a6a56] bg-[#2d4a3a]">
+                        @if(str_contains($media->media_type, 'image'))
+                        <img src="{{ asset('storage/' . $media->media_url) }}" class="w-auto h-auto object-contain block" alt="{{ $media->media_url }}">
+                        @else
+                        <svg class="w-full h-full text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path>
+                        </svg>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <svg class="w-10 h-10 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L12 14l2.586-2.586a2 2 0 012.828 0L16 16"></path>
+                </svg>
+                @endif
+            </div>
+
+            <!-- Location Info -->
+            <div class="flex items-start gap-4 mb-8 mt-8    ">
+                <div class="w-8 h-8 bg-[#3d5c4c] rounded-lg flex items-center justify-center text-white flex-shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-white text-sm font-medium">{{ $report->latitude ?? '-' }}°, {{ $report->longitude ?? '-' }}°</p>
+                    <p class="text-white/80 text-sm">{{ $report->reporter_location ?? '-' }}</p>
+                </div>
+                <div class="flex items-center mb-1">
+                    <span class="text-m font-medium text-white">RT {{ $report->reporter_rt }}</span>
+                </div>
+            </div>
+
+            <!-- Reporter Info -->
+            <div class="flex items-start gap-4 mb-8">
+                <div class="w-8 h-8 bg-[#3d5c4c] rounded-lg flex items-center justify-center text-white flex-shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-white text-sm font-medium">{{ $report->reporter_name ?? '-' }}</p>
+                    <p class="text-white/80 text-sm">{{ $report->reporter_phone_number ?? '-' }}</p>
+                </div>
+            </div>
+
+            <!-- Deskripsi -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-white mb-3">Deskripsi</h3>
+                <p class="text-white/80 text-sm leading-relaxed">{{ $report->description }}</p>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="bg-[#1a3326] rounded-xl p-6 border border-[#3d5c4c]/20">
+                <h3 class="text-xl font-bold text-white mb-4">Komentar</h3>
+
+                <!-- Comment Form -->
+                <form action="{{ route('reports.comments.store', $report->report_id) }}" method="POST" class="mb-6">
+                    @csrf
+                    <textarea name="body" rows="2" placeholder="Tulis komentar..." class="w-full mb-6 px-4 py-3 rounded-xl bg-[#1a3326] border border-[#3d5c4c]/50 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all"></textarea>
+                    <div class="flex gap-3">
+                        <button type="submit" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-medium transition-colors">Kirim</button>
+                    </div>
+                </form>
+
+                <!-- Comments List -->
+                <div class="space-y-4">
+                    @forelse($report->comments as $comment)
+                    <div class="flex gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-[#3d5c4c] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1 text-sm">
+                            <div class="flex justify-between mb-1">
+                                <p class="text-white font-medium">{{ $comment->user ? $comment->user->full_name : 'Pengguna' }}</p>
+                                <p class="text-[#1a3326]/60 text-xs">{{ $comment->created_at ?? '' }}</p>
+                            </div>
+                            <p class="text-[#c9d1d9] text-sm leading-relaxed">{{ $comment->body }}</p>
+                        </div>
+                    </div>
+                    @empty
+                    <p class="text-[#1a3326]/50 text-sm text-center py-4">Belum ada komentar.</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
     </div>
-</html>
+</div>
+@endsection

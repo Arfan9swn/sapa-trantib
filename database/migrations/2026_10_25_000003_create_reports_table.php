@@ -27,8 +27,8 @@ return new class extends Migration
             $table->timestamp('submitted_at');
             $table->timestamp('resolved_at')->nullable();
             $table->text('resolution_note')->nullable();
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
             $table->foreign('sub_category_id')->references('sub_category_id')->on('sub_categories')->onDelete('cascade');
