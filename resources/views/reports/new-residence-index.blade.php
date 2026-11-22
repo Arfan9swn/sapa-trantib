@@ -79,6 +79,14 @@
                                             Hapus
                                         </button>
                                     </form>
+                                    <form action="{{ route('warga.reports.new-residence.status', $report->new_residence_id) }}" method="POST" class="inline w-auto">
+                                        @csrf
+                                        <select name="status" class="block w-auto rounded-xl bg-[#3d5c4c] hover:bg-[#4a6a56] px-3 py-2 text-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all appearance-none border border-[#4a6a56]" onchange="this.form.submit()">
+                                            <option value="pending" {{ $report->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="resolved" {{ $report->status === 'resolved' ? 'selected' : '' }}>Selesai</option>
+                                            <option value="rejected" {{ $report->status === 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                                        </select>
+                                    </form>
                                     @endif
                                 </div>
                             </div>

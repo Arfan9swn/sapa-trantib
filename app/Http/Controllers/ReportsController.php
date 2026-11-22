@@ -238,6 +238,31 @@ class ReportsController extends Controller
         return back()->with('success', 'Laporan penduduk baru berhasil dihapus.');
     }
 
+    /** Update status of a new residence report (admin only). */
+    public function newResidenceStatus(Request $request, $id)
+    {
+        $userRole = session('auth_user_role') ?? '';
+        if (!in_array(strtolower($userRole), ['admin', 'super_admin'], true)) {
+            return back()->with('error', 'Hanya admin yang dapat mengubah status laporan penduduk baru.');
+        }
+
+        $request->validate([
+            'status' => 'required|in:pending,resolved,rejected',
+        ]);
+
+        $report = NewResidenceReport::findOrFail($id);
+        $report->status = $request->status;
+        $report->save();
+
+        $statusLabel = [
+            'pending' => 'Pending',
+            'resolved' => 'Selesai',
+            'rejected' => 'Ditolak',
+        ][$request->status];
+
+        return back()->with('success', "Status laporan penduduk baru diubah menjadi {$statusLabel}.");
+    }
+
     /** Update report status (admin/super_admin only). */
     public function updateStatus(Request $request, Reps $report)
     {

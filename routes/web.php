@@ -314,6 +314,7 @@ Route::get('/activities', function () {
 
 Route::get('/warga/reports/create', [App\Http\Controllers\ReportsController::class, 'wargaCreate'])->name('warga.reports.create');
 Route::post('/warga/reports', [App\Http\Controllers\ReportsController::class, 'wargaStore'])->name('warga.reports.store');
+Route::post('/warga/reports/new-residence/{id}/status', [App\Http\Controllers\ReportsController::class, 'newResidenceStatus'])->name('warga.reports.new-residence.status');
 Route::get('/warga/reports/new-residence', [App\Http\Controllers\ReportsController::class, 'newResidenceIndex'])->name('warga.reports.new-residence.index');
 Route::delete('/warga/reports/new-residence/{id}', [App\Http\Controllers\ReportsController::class, 'newResidenceDestroy'])->name('warga.reports.new-residence.destroy');
 Route::get('/warga/reports/create/new-residence', [App\Http\Controllers\ReportsController::class, 'newResidenceCreate'])->name('warga.reports.create.new-residence');
