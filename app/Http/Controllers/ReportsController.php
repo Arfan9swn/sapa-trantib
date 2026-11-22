@@ -8,6 +8,9 @@ use App\Models\Reps;
 use App\Models\RepsMedia;
 use App\Models\SubCat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+
 class ReportsController extends Controller
 {
     /** Display a listing of the reports (for admin). */
@@ -46,7 +49,7 @@ class ReportsController extends Controller
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,category_id',
             'sub_category_id' => 'nullable|exists:sub_categories,sub_category_id',
-            'status' => 'required|string|max:50',
+            'status' => 'required|in:pending,resolved,rejected',
             'reporter_name' => 'required|string|max:100',
             'reporter_phone_number' => 'nullable|string|max:20',
             'reporter_location' => 'nullable|string|max:255',
@@ -56,6 +59,14 @@ class ReportsController extends Controller
             'boosts' => 'nullable|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+
+        if (empty($validated['sub_category_id'])) {
+            $validated['sub_category_id'] = null;
+        }
+
+        if ($validated['status'] === 'resolved') {
+            $validated['resolved_at'] = now();
+        }
 
         $report = Reps::create($validated);
 
@@ -76,19 +87,19 @@ class ReportsController extends Controller
     /** Store a new report as warga/guest. */
     public function wargaStore(Request $request)
     {
-        // Auto-fill system fields before validation (guaranteed to be present)
         $request->merge([
-            'status'              => $request->input('status', 'pending'),
-            'reporter_name'       => $request->input('reporter_name', session('auth_user_name', 'Warga')),
-            'reporter_phone_number'=> session('auth_user_phone', ''),
+            'status'                => $request->input('status', 'pending'),
+            'reporter_name'         => $request->input('reporter_name', session('auth_user_name', 'Warga')),
+            'reporter_phone_number' => session('auth_user_phone', ''),
+            'sub_category_id'       => $request->filled('sub_category_id') ? $request->input('sub_category_id') : null,
         ]);
 
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'title'                  => 'required|string|max:255',
             'description'            => 'nullable|string',
             'category_id'            => 'nullable|exists:categories,category_id',
             'sub_category_id'        => 'nullable|exists:sub_categories,sub_category_id',
-            'status'                 => 'required|string|max:50',
+            'status'                 => 'required|in:pending,resolved,rejected',
             'reporter_name'          => 'required|string|max:100',
             'reporter_phone_number'  => 'nullable|string|max:20',
             'reporter_location'      => 'nullable|string|max:255',
@@ -107,12 +118,15 @@ class ReportsController extends Controller
 
         $validated = $validator->validated();
 
-        // Ensure required database fields are present
         $now = now();
         $validated['submitted_at']   = $now;
         $validated['created_at']     = $now;
         $validated['updated_at']     = $now;
         $validated['reference_code'] = 'WRG-' . strtoupper(substr(uniqid(), -8));
+
+        if ($validated['status'] === 'resolved') {
+            $validated['resolved_at'] = $now;
+        }
 
         try {
             $report = Reps::create($validated);
@@ -127,10 +141,10 @@ class ReportsController extends Controller
                 ]);
             }
 
-            return redirect()->route('reports.index')
-                ->with('success', 'Laporan berhasil dibuat sebagai warga/guest.');
-        } catch (\Exception $e) {
-            \Log::error('wargaStore error: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('reports.admin')
+                ->with('success', 'Laporan berhasil dikirim.');
+        } catch (\Throwable $e) {
+            Log::error('wargaStore error: ' . $e->getMessage(), ['exception' => $e]);
 
             return redirect()->route('warga.reports.create')
                 ->withErrors(['report' => 'Gagal menyimpan laporan: ' . $e->getMessage()])
@@ -196,11 +210,11 @@ class ReportsController extends Controller
         }
 
         $request->validate([
-            'status' => 'required|in:pending,rejected,done',
+            'status' => 'required|in:pending,resolved,rejected',
         ]);
 
         $report->status = $request->status;
-        if ($request->status === 'done') {
+        if ($request->status === 'resolved') {
             $report->resolved_at = now();
         } else {
             $report->resolved_at = null;
@@ -212,20 +226,18 @@ class ReportsController extends Controller
 
     /** Delete a report. */
     public function destroy(Request $request, Reps $report)
-{
-    // Authorization check: user must be admin/super_admin or the report owner
-    $userRole = session('auth_user_role') ?? '';
-    $userPhone = session('auth_user_phone') ?? '';
-    
-    if (!in_array(strtolower($userRole), ['admin', 'super_admin'], true)) {
-        if (strtolower($report->reporter_phone_number) !== strtolower($userPhone)) {
-            return back()->with('error', 'Anda tidak memiliki izin menghapus laporan ini.');
+    {
+        $userRole = session('auth_user_role') ?? '';
+        $userPhone = session('auth_user_phone') ?? '';
+
+        if (!in_array(strtolower($userRole), ['admin', 'super_admin'], true)) {
+            if (strtolower($report->reporter_phone_number) !== strtolower($userPhone)) {
+                return back()->with('error', 'Anda tidak memiliki izin menghapus laporan ini.');
+            }
         }
+
+        $report->delete();
+
+        return redirect()->route('reports.admin')->with('success', 'Laporan berhasil dihapus.');
     }
-    
-    $report->delete();
-    
-    return redirect()->route('reports.admin')->with('success', 'Laporan berhasil dihapus.');
 }
-}
- 

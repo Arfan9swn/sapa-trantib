@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('report_activity', function (Blueprint $table) {
-            $table->timestamp('created_at')->nullable()->after('new_value');
+            if (!Schema::hasColumn('report_activity', 'created_at')) {
+                $table->timestamp('created_at')->nullable()->after('new_value');
+            }
         });
     }
 
@@ -22,8 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('report_activity', function (Blueprint $table) {
-            $table->dropColumn('created_at');
+            if (Schema::hasColumn('report_activity', 'created_at')) {
+                $table->dropColumn('created_at');
+            }
         });
     }
 };
-
