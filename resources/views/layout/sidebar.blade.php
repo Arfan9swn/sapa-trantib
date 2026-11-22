@@ -82,11 +82,19 @@
                         </div>
                         Laporan Semua
                     </a>
-                    <a href="{{ route('reports.create') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg {{ request()->routeIs('reports.create') ? 'active' : '' }}">
+                    <!-- Laporan Insiden -->
+                    <a href="{{ route('warga.reports.create') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg {{ request()->routeIs('warga.reports.create') ? 'active' : '' }}">
                         <div class="w-6 h-6 bg-[#3d5c4c] rounded-lg flex items-center justify-center flex-shrink-0">
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </div>
-                        Kirim laporan
+                        Laporan Insiden
+                    </a>
+                    <!-- Laporan Penduduk Baru -->
+                    <a href="{{ route('warga.reports.create.new-residence') }}" class="sidebar-link flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-l-lg {{ request()->routeIs('warga.reports.create.new-residence') ? 'active' : '' }}">
+                        <div class="w-6 h-6 bg-[#3d5c4c] rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </div>
+                        Laporan Penduduk Baru
                     </a>
 
                 @endif

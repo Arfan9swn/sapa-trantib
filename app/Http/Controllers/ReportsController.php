@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cat;
+use App\Models\NewResidenceReport;
 use App\Models\Reps;
 use App\Models\RepsMedia;
 use App\Models\SubCat;
@@ -147,6 +148,43 @@ class ReportsController extends Controller
             : collect();
 
         return view('reports.create', compact('categories', 'subCategories', 'categoryId'));
+    }
+
+    /** Show new residence report creation form. */
+    public function newResidenceCreate()
+    {
+        return view('reports.new-residence-report');
+    }
+
+    /** Store a new residence report as warga/guest. */
+    public function newResidenceStore(Request $request)
+    {
+        $validated = $request->validate([
+            'nik'            => 'required|string|max:16',
+            'nama'           => 'required|string|max:100',
+            'nomor_telepon'  => 'required|string|max:20',
+            'alamat'         => 'required|string|max:255',
+        ]);
+
+        try {
+            $report = NewResidenceReport::create([
+                'user_id'        => session('auth_user_id'),
+                'nik'            => $validated['nik'],
+                'nama'           => $validated['nama'],
+                'nomor_telepon'  => $validated['nomor_telepon'],
+                'alamat'         => $validated['alamat'],
+                'status'         => 'pending',
+            ]);
+
+            return redirect()->route('reports.index')
+                ->with('success', 'Laporan penduduk baru berhasil dibuat.');
+        } catch (\Exception $e) {
+            \Log::error('newResidenceStore error: ' . $e->getMessage(), ['exception' => $e]);
+
+            return redirect()->route('warga.reports.create.new-residence')
+                ->withErrors(['report' => 'Gagal menyimpan laporan: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /** Update report status (admin/super_admin only). */
