@@ -33,14 +33,8 @@
             </form>
 
                 @forelse($reports as $report)
-                <div class="rounded-2xl shadow-sm border border-white/20 overflow-hidden">
+                <div class="rounded-2xl shadow-sm border border-white/20 overflow-hidden mb-8">
                     <div class="flex flex-col md:flex-row">
-                        <!-- Info Icon -->
-                        <div class="w-full md:w-48 h-48 md:h-auto bg-[#2d4a3a] flex items-center justify-center">
-                            <svg class="w-16 h-16 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </div>
 
                         <!-- Content -->
                         <div class="p-6 flex-1">
@@ -81,8 +75,7 @@
                                     @if ($isAdmin)
                                     <form action="{{ route('warga.reports.new-residence.destroy', $report->new_residence_id) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" onclick="return confirm('Yakin menghapus laporan penduduk baru ini?')" class="bg-[#a63d3d] hover:bg-[#8f3333] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-[#c96b6b]">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        <button type="submit" onclick="return confirm('Yakin menghapus laporan penduduk baru ini?')" class="bg-[#a63d3d] hover:bg-[#8f3333] flex flex-row text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-[#c96b6b]">
                                             Hapus
                                         </button>
                                     </form>
